@@ -1,0 +1,4 @@
+include burton/default.config
+include burton/parser/test/test.*
+include burton/database/sqlite.schema
+include burton/translation/template.xlf

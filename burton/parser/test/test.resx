@@ -1,0 +1,20 @@
+<root>
+    <data name="&gt;&gt;someString.Name" xml:space="preserve">
+        <value>SomeString</value>
+    </data>
+    <data name="SomeString.Text" xml:space="preserve">
+        <value>Translation for some string</value>
+    </data>
+    <data name="SomeOtherString" xml:space="preserve">
+        <value>Translation for the other string</value>
+    </data>
+    <data name="&gt;&gt;$this.Name" xml:space="preserve">
+        <value>YetAnotherString</value>
+    </data>
+    <data name="&gt;&gt;$this.Text" xml:space="preserve">
+        <value>Yet another translation</value>
+    </data>
+    <data name="ToolTipString.ToolTipText" xml:space="preserve">
+        <value>A ToolTip String</value>
+    </data>
+</root>

@@ -1,0 +1,14 @@
+<manifest>
+    <identifier>test-identifier</identifier>
+    <category>English Category</category>
+    <title>English Title</title>
+    <version>1</version>
+    <filename>test.html</filename>
+    <imageFilename>test.png</imageFilename>
+    <elements>
+        <name>English Test Element 1</name>
+        <element>test-element1</element>
+        <name>English Test Element 2</name>
+        <element>test-element2</element>
+    </elements>
+</manifest>

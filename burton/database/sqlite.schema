@@ -1,0 +1,49 @@
+CREATE TABLE languages (
+    language_no INTEGER PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    code TEXT NOT NULL
+);
+
+CREATE TABLE platforms (
+    platform_no INTEGER PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE translation_keys (
+    translation_key_no INTEGER PRIMARY KEY,
+    translation_key TEXT UNIQUE NOT NULL,
+    last_updated INTEGER NOT NULL
+);
+
+CREATE TABLE native_translations (
+    native_translation_no INTEGER PRIMARY KEY,
+    translation_key_no INTEGER REFERENCES translation_keys (translatable_key_no) NOT NULL,
+    platform_no INTEGER REFERENCES platforms (platform_no) NOT NULL,
+    translation TEXT NOT NULL
+);
+
+CREATE UNIQUE INDEX unq_native_translations ON native_translations (
+    translation_key_no,
+    platform_no
+);
+
+CREATE TABLE replaced_params (
+    translation_param_no INTEGER PRIMARY KEY,
+    platform_no INTEGER REFERENCES platforms (platform_no) NOT NULL,
+    native_translation_no INTEGER
+        REFERENCES native_translations (native_translation_no) NOT NULL,
+    param_index INTEGER NOT NULL,
+    param_string TEXT NOT NULL
+);
+
+CREATE TABLE defunct_translations (
+    language_no INT REFERENCES languages (language_no),
+    native_string TEXT NOT NULL,
+    translation TEXT NOT NULL,
+    last_updated INTEGER NOT NULL
+);
+
+CREATE UNIQUE INDEX unq_defunct_translations ON defunct_translations (
+    language_no,
+    native_string
+);

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+   <file build-num="AG3 doesn't specify" category=""
+         product-name=""
+         source-language="en"
+         target-language="">
+      <header>
+         <phase-group>
+            <phase company-name="" contact-email="" contact-phone=""
+                   phase-name="test num"
+                   process-name="Translations entered by 'test num'"
+                   tool="LocFactory Editor"/>
+         </phase-group>
+      </header>
+      <!--...................................................--><body>
+         <group resname="Group Name">
+         </group>
+      </body>
+   </file>
+</xliff>

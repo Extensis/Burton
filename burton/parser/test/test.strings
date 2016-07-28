@@ -1,0 +1,10 @@
+// "This/is" = "a comment";
+"SomeString" = "Translation for some string";
+/* Other comment format */
+"SomeOtherString" = "Translation for the \
+other string"; // End comment
+"A string that translates to itself"; /* Comment at line's end */
+"YetAnotherString" = "Yet another
+string";
+"Could not open font \"{0}\"." = "Could not open font \"{0}\".";
+InfoPlistVariable = /* Middle comment */ "Info Plist Variable";
