@@ -53,6 +53,8 @@ class ConfigTests(unittest.TestCase):
             (burton.logger_name, "ERROR", "Unable to parse config file"),
             (burton.logger_name, "ERROR", "default_param has not been set"),
         )
+        
+        captured_log.uninstall()
 
     def test_returns_false_if_config_file_contains_unknown_variable(self):
         config_fp = cStringIO.StringIO("""
@@ -73,6 +75,8 @@ class ConfigTests(unittest.TestCase):
             (burton.logger_name, "ERROR", "Unable to parse config file"),
             (burton.logger_name, "ERROR", "other_param is not a valid option"),
         )
+        
+        captured_log.uninstall()
 
     def test_returns_false_if_config_file_does_not_contain_platform(self):
         config_fp = cStringIO.StringIO("""
@@ -92,6 +96,8 @@ class ConfigTests(unittest.TestCase):
             (burton.logger_name, "ERROR", "Unable to parse config file"),
             (burton.logger_name, "ERROR", "Platform platform2 does not exist"),
         )
+        
+        captured_log.uninstall()
 
     def test_parses_json_values(self):
         config_fp = cStringIO.StringIO("""
@@ -275,6 +281,8 @@ class ConfigTests(unittest.TestCase):
                 "\n\t".join(c._command_line_mapping.keys())
             )
         )
+        
+        captured_log.uninstall()
 
     def test_returns_false_if_missing_required_command_line_options(self):
         c = burton.Config(
@@ -292,6 +300,8 @@ class ConfigTests(unittest.TestCase):
         captured_log.check(
             (burton.logger_name, "ERROR", "Missing required option foo"),
         )
+        
+        captured_log.uninstall()
 
         captured_log = testfixtures.LogCapture()
         self.assertFalse(c.parse_command_line_options(
@@ -301,6 +311,8 @@ class ConfigTests(unittest.TestCase):
         captured_log.check(
             (burton.logger_name, "ERROR", "Missing required option foo"),
         )
+        
+        captured_log.uninstall()
 
     def test_returns_false_if_encounters_unknown_command_line_options(self):
         c = burton.Config(
@@ -317,6 +329,8 @@ class ConfigTests(unittest.TestCase):
         captured_log.check(
             ( burton.logger_name, "ERROR", "Unknown option -o" ),
         )
+        
+        captured_log.uninstall()
 
     def test_returns_false_if_missing_command_line_arguments(self):
         c = burton.Config(
@@ -333,6 +347,8 @@ class ConfigTests(unittest.TestCase):
         captured_log.check(
             (burton.logger_name, "ERROR", "Missing argument for --platform"),
         )
+        
+        captured_log.uninstall()
 
     def test_uses_defaults(self):
         config_fp = cStringIO.StringIO("""
@@ -421,6 +437,8 @@ class ConfigTests(unittest.TestCase):
                 "Please fill out the config file and run your command again"
             ),
         )
+        
+        captured_log.uninstall()
 
         self.assertEquals(
             "".join(lines),

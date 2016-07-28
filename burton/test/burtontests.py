@@ -311,6 +311,8 @@ class BurtonTests(unittest.TestCase):
             ),
             (burton.logger_name, "ERROR", "\tunmapped string\n"),
         )
+        
+        captured_log.uninstall()
 
     @mock.patch("__builtin__.open")
     @mock.patch.object(burton, "_open_translation_file_for_language")
@@ -366,6 +368,8 @@ class BurtonTests(unittest.TestCase):
                 "There are untranslated strings in test filename"
             ),
         )
+        
+        captured_log.uninstall()
 
     @mock.patch("__builtin__.open")
     @mock.patch.object(burton, "_open_translation_file_for_language")
@@ -403,6 +407,7 @@ class BurtonTests(unittest.TestCase):
         )
 
         captured_log.check()
+        captured_log.uninstall()
 
     @mock.patch.object(os, "listdir")
     @mock.patch.object(burton, "_get_localized_resource_instance")
@@ -786,6 +791,7 @@ class BurtonTests(unittest.TestCase):
                     "Finished running for platform Test-platform"
                 )
             )
+            captured_log.uninstall()
 
             exit_func.assert_called_with(1)
 
@@ -822,6 +828,8 @@ class BurtonTests(unittest.TestCase):
                 "No platforms found in config file"
             )
         )
+
+        captured_log.uninstall()
 
         exit_func.assert_called_with(1)
 
@@ -864,6 +872,8 @@ class BurtonTests(unittest.TestCase):
                 "Unable to parse command-line options"
             )
         )
+        
+        captured_log.uninstall()
 
         exit_func.assert_called_with(1)
 
@@ -910,6 +920,8 @@ class BurtonTests(unittest.TestCase):
                 "Unable to determine next platform in config file"
             )
         )
+        
+        captured_log.uninstall()
 
         exit_func.assert_called_with(1)
 

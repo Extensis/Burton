@@ -15,8 +15,5 @@ setup(
     install_requires = [
         "chardet", "lxml"
     ],
-    extras_require = {
-        "test" : [ "coverage", "mock", "nose", "textfixtures" ]
-    },
     include_package_data = True,
 )
