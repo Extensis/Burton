@@ -11,46 +11,29 @@ class Git(NoOp):
     def __init__(self):
         NoOp.__init__(self)
 
-    def add_file(self, file, submodule_path = None):
-        file = self._get_relative_submodule_path(file, submodule_path)
+    def add_file(self, file, xlf_repo_path = None):
         self._run_command(
             [ "add", file ],
-            submodule_path
+            xlf_repo_path
         )
-    
-    def mark_file_for_edit(self, file, submodule_path = None):
-        self.add_file(file, submodule_path)
 
-    def commit_changes(self, message):
-        for submodule_path in self.submodule_paths:
-            self._run_command(
-                [ "add", submodule_path ]
-            )
-        
-            cwd = os.getcwd()
-            os.chdir(submodule_path)
-            
+    def commit_changes(self, message, xlf_repo_path = None):
+        if xlf_repo_path is not None:        
             pipe = self._run_command_and_return_output_pipe(
-                [ "status", "-uno", "--porcelain" ]
+                [ "status", "-uno", "--porcelain" ],
+                xlf_repo_path
             )
+    
+            if pipe.stdout.read() != '':
+                self._run_command(
+                   [ "commit", "-m", message ],
+                   xlf_repo_path
+                )
         
-            if pipe.stdout.read() == '':
-                os.chdir(cwd)
-                continue
-            
-            self._run_command(
-               [ "commit", "-m", message ]
-            )
-            
-            self._run_command(
-                [ "push", "origin", "HEAD" ]
-            )
-            
-            os.chdir(cwd)
-            
-            self._run_command(
-                [ "add", submodule_path ]
-            )
+                self._run_command(
+                    [ "push", "origin", "HEAD" ],
+                    xlf_repo_path
+                )
     
         pipe = self._run_command_and_return_output_pipe(
             [ "status", "-uno", "--porcelain" ]
@@ -67,33 +50,31 @@ class Git(NoOp):
             [ "push", "origin", "HEAD" ]
         )
 
-    def revert_all(self):
-        for submodule_path in self.submodule_paths:
-            cwd = os.getcwd()
-            os.chdir(submodule_path)
-            
-            self._run_command([ "reset", "-hard" ])
-            
-            os.chdir(cwd)
+    def revert_all(self, xlf_repo_path = None):
+        if xlf_repo_path is not None:
+            self._run_command([ "reset", "--hard" ], xlf_repo_path)
     
-        self._run_command([ "reset", "-hard" ])
+        self._run_command([ "reset", "--hard" ])
 
-    def revert(self, path, submodule_path = None):
-        path = self._get_relative_submodule_path(path, submodule_path)
-        self._run_command([ "reset", "HEAD", path ], submodule_path)
-        self._run_command([ "checkout", path ], submodule_path)
+    def revert(self, path, xlf_repo_path = None):
+        self._run_command([ "reset", "HEAD", path ], xlf_repo_path)
+        self._run_command([ "checkout", path ], xlf_repo_path)
 
-    def _run_command(self, commands, submodule_path = None):
+    def _run_command(self, commands, xlf_repo_path = None):
         cwd = os.getcwd()
-        if submodule_path is not None:
-            os.chdir(submodule_path)
+        if xlf_repo_path is not None:
+            os.chdir(xlf_repo_path)
 
         self._check_for_errors(self._run_command_and_return_output_pipe(commands))
         
-        if submodule_path is not None:
+        if xlf_repo_path is not None:
             os.chdir(cwd)
 
-    def _run_command_and_return_output_pipe(self, commands):
+    def _run_command_and_return_output_pipe(self, commands, xlf_repo_path = None):
+        cwd = os.getcwd();
+        if xlf_repo_path is not None:
+            os.chdir(xlf_repo_path)
+        
         commands.insert(0, "git")
 
         pipe = subprocess.Popen(
@@ -104,14 +85,11 @@ class Git(NoOp):
         
         pipe.wait()
         
+        if cwd is not None:
+            os.chdir(cwd)
+        
         return pipe
 
     def _check_for_errors(self, pipe):
         if pipe.returncode != 0:
             raise VCSException(pipe.stdout.read())
-    
-    def _get_relative_submodule_path(self, path, submodule_path):
-        if submodule_path is not None:
-            return os.path.relpath(os.path.abspath(path), os.path.abspath(submodule_path))
-        else:
-            return os.path.abspath(path)

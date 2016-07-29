@@ -78,11 +78,6 @@ class PasteboardXML(Base):
             if not os.path.exists(output_filename):
                 logger.error("Create new file " + output_filename)
 
-            if should_use_vcs:
-                vcs_class.add_file(output_filename)
-                vcs_class.update_path(output_filename)
-                vcs_class.mark_file_for_edit(output_filename)
-
             tree = lxml.etree.fromstring(self._read_file(input_filename))
 
             def _rewrite_mapping(key, value, node):
@@ -102,7 +97,7 @@ class PasteboardXML(Base):
             file.close()
             
             if should_use_vcs:
-                vcs_class.mark_file_for_edit(output_filename)
+                vcs_class.add_file(output_filename)
 
         return output_filename
 

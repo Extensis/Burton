@@ -151,7 +151,3 @@ NewString Untranslated string\n"""
         vcs_class.add_file.assert_called_with(
             os.path.join("locale", "it_IT", "strings.properties")
         )
-
-        vcs_class.mark_file_for_edit.assert_called_with(
-            os.path.join("locale", "it_IT", "strings.properties")
-        )

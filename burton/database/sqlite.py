@@ -39,8 +39,6 @@ class SQLite(object):
 
         full_path = os.path.abspath(self.filename)
         vcs.add_file(full_path, submodule_path)
-        vcs.update_path(full_path, submodule_path)
-        vcs.mark_file_for_edit(full_path, submodule_path)
 
     def connect(self):
         """Opens the database connection, loading the SQL file if present, or a

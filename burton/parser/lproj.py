@@ -48,10 +48,6 @@ class LPROJ(Base):
                     os.path.basename(filename)
                 )
 
-                if should_use_vcs and not created_file:
-                    vcs_class.update_path(output_filename)
-                    vcs_class.mark_file_for_edit(output_filename)
-
                 output_file_mapping = { }
 
                 for key in input_mapping:
@@ -72,10 +68,7 @@ class LPROJ(Base):
                 file.close()
                 
                 if should_use_vcs:
-                    if created_file:
-                        vcs_class.add_file(output_filename)
-                    else:
-                        vcs_class.mark_file_for_edit(output_filename)
+                    vcs_class.add_file(output_filename)
 
         return output_directory
 

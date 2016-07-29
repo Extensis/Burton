@@ -101,9 +101,6 @@ class RESX(Base):
             if not os.path.exists(output_filename):
                 created_file = True
                 logger.error("Created new file " + output_filename)
-            elif should_use_vcs:
-                vcs_class.update_path(output_filename)
-                vcs_class.mark_file_for_edit(output_filename)
 
             tree = lxml.etree.fromstring(self._read_file(input_filename))
 
@@ -129,10 +126,7 @@ class RESX(Base):
             file.close()
             
             if should_use_vcs:
-                if created_file:
-                    vcs_class.add_file(output_filename)
-                else:
-                    vcs_class.mark_file_for_edit(output_filename)
+                vcs_class.add_file(output_filename)
 
         return output_filename
 

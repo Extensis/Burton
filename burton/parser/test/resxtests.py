@@ -165,7 +165,6 @@ class RESXTests(unittest.TestCase):
         self.assertFalse(mkdir_func.called)
         self.assertFalse(resx_parser._open_file_for_writing.called)
         self.assertFalse(vcs_class.add_file.called)
-        self.assertFalse(vcs_class.mark_file_for_edit.called)
 
         output_filename = resx_parser.translate(
             "Sample.resx",

@@ -509,10 +509,9 @@ class BurtonTests(unittest.TestCase):
 
         mock_file = mock.Mock()
         open_func.return_value = mock_file
-        submodule_path = "xlf"
+        xlf_repo_path = "xlf"
 
         config_dict = {
-            burton.Config.translation_files_dir   : "some_path",
             burton.Config.files_by_language       : {
                 "English" : "English.xlf",
                 "French"  : "French.xlf"
@@ -528,7 +527,7 @@ class BurtonTests(unittest.TestCase):
             burton.Config.company_name            : "Test Company",
             burton.Config.product_name            : "Test Product",
             burton.Config.contact_email           : "foo@example.com",
-            burton.Config.xlf_submodule_path      : submodule_path
+            burton.Config.xlf_repo_path           : xlf_repo_path
         }
 
         def _config_get(key):
@@ -552,18 +551,12 @@ class BurtonTests(unittest.TestCase):
 
         self.assertEquals(
             filename,
-            os.path.join(".",
-                "some_path",
-                "English.xlf"
-            )
+            os.path.join(os.path.abspath(xlf_repo_path), "English.xlf")
         )
 
         self.assertFalse(open_func.called)
         self.assertFalse(mock_file.close.called)
-
         self.assertFalse(vcs_class.add_file.called)
-        self.assertFalse(vcs_class.update_path.called)
-        self.assertFalse(vcs_class.mark_file_for_edit.called)
 
         exists_func.return_value = True
         config_dict[burton.Config.use_vcs] = True
@@ -581,33 +574,23 @@ class BurtonTests(unittest.TestCase):
 
         self.assertEquals(
             filename,
-            os.path.join(".",
-                "some_path",
-                "English.xlf"
-            )
+            os.path.join(os.path.abspath(xlf_repo_path), "English.xlf")
         )
 
         open_func.assert_called_with(
-            os.path.join(".", "some_path", "English.xlf"),
+            os.path.join(os.path.abspath(xlf_repo_path), "English.xlf"),
             "r"
         )
         self.assertTrue(mock_file.close.called)
 
         vcs_class.add_file.assert_called_with(
-            os.path.join(".", "some_path", "English.xlf"),
-            submodule_path
-        )
-        vcs_class.update_path.assert_called_with(
-            os.path.join(".", "some_path", "English.xlf"),
-            submodule_path
-        )
-        vcs_class.mark_file_for_edit.assert_called_with(
-            os.path.join(".", "some_path", "English.xlf"),
-            submodule_path
+            "English.xlf",
+            os.path.abspath(xlf_repo_path)
         )
 
     @mock.patch("__builtin__.exit")
     @mock.patch.object(os, "chdir")
+    @mock.patch.object(os.path, "isdir")
     @mock.patch.object(burton, "_create_config_instance")
     @mock.patch.object(burton, "setup_default_logger")
     @mock.patch.object(burton, "config_logger")
@@ -630,13 +613,14 @@ class BurtonTests(unittest.TestCase):
         config_logger_func,
         setup_default_logger_func,
         create_config_instance_func,
+        isdir_func,
         chdir_func,
         exit_func
     ):
         ran_all_tests = False
         test_db_name = "burton_test.sql"
         platform_string = "Test-platform"
-        submodule_path = "submodule"
+        xlf_repo_path = "submodule"
         config_dict = {
             burton.Config.use_vcs            : False,
             burton.Config.vcs_class          : "burton.vcs.NoOp",
@@ -647,8 +631,10 @@ class BurtonTests(unittest.TestCase):
             burton.Config.output_languages   : [ "French" ],
             burton.Config.logging_level      : "info",
             burton.Config.source_path        : "foo",
-            burton.Config.xlf_submodule_path : submodule_path
+            burton.Config.xlf_repo_path      : xlf_repo_path
         }
+
+        isdir_func.return_value = True
 
         def _config_get(key):
             return config_dict[key]
@@ -935,7 +921,7 @@ class BurtonTests(unittest.TestCase):
     def test_create_db_instance(self, mock_constructor):
         def _config_get(key):
             return {
-                burton.Config.root_path     : "some_path",
+                burton.Config.xlf_repo_path : "some_path",
                 burton.Config.database_path : "some_file"
             }[key]
 
@@ -944,5 +930,6 @@ class BurtonTests(unittest.TestCase):
 
         burton._create_db_instance(conf)
         mock_constructor.assert_called_with(
-            os.path.join("some_path", "some_file")
+            os.path.join(os.path.abspath("some_path")
+            , "some_file")
         )

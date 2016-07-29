@@ -61,13 +61,12 @@ class Config(object):
     translation_files_class  = "translation_files_class"
     language_codes           = "language_codes"
     files_by_language        = "files_by_language"
-    translation_files_dir    = "translation_files_dir"
     paths_to_localize        = "paths_to_localize"
     recursive_localization   = "recursive_localization"
     localization_output_dir  = "localization_output_dir"
     extensions_to_localize   = "extensions_to_localize"
     abort_if_no_translations = "abort_if_no_translations"
-    xlf_submodule_path       = "xlf_submodule_path"
+    xlf_repo_path            = "xlf_repo_path"
 
     # Constants for command-line options
     root_path          = "root_path"
@@ -99,9 +98,8 @@ class Config(object):
         extensions_to_localize   :  [],
         files_by_language        : {},
         translation_files_class  : "translation.XLF",
-        translation_files_dir    : None,
         abort_if_no_translations : "false",
-        xlf_submodule_path       : None,
+        xlf_repo_path            : None,
         language_codes           : {
             "English"    : "en-US",
             "French"     : "fr-FR",

@@ -43,11 +43,6 @@ def config_logger(conf):
 
 def create_vcs_class(conf):
     vcs_class = _class_from_string(conf.get(Config.vcs_class))()
-    xlf_submodule_path = conf.get(Config.xlf_submodule_path)
-    
-    if xlf_submodule_path is not None:
-        vcs_class.add_submodule_path(xlf_submodule_path)
-    
     return vcs_class
 
 def _class_from_string(class_name):
@@ -377,12 +372,8 @@ def _get_localized_resource_instance(conf, extension):
     return cls()
 
 def _open_translation_file_for_language(conf, language, vcs_class):
-    filename = os.path.join(
-        conf.get(Config.root_path),
-        conf.get(Config.translation_files_dir),
-        conf.get(Config.files_by_language)[language]
-    )
-
+    filename = conf.get(Config.files_by_language)[language]
+    
     cls = _class_from_string(conf.get(Config.translation_files_class))
     translation_file = cls(
         language,
@@ -393,18 +384,18 @@ def _open_translation_file_for_language(conf, language, vcs_class):
         conf.get(Config.contact_email)
     )
 
-    if conf.get(Config.use_vcs):
-        xlf_submodule_path = conf.get(Config.xlf_submodule_path)
-        vcs_class.add_file(filename, xlf_submodule_path)
-        vcs_class.update_path(filename, xlf_submodule_path)
-        vcs_class.mark_file_for_edit(filename, xlf_submodule_path)
+    xlf_repo_path = os.path.abspath(conf.get(Config.xlf_repo_path))
 
-    if os.path.exists(filename):
-        file = open(filename, "r")
+    if conf.get(Config.use_vcs):
+        vcs_class.add_file(filename, xlf_repo_path)
+
+    full_path = os.path.join(xlf_repo_path, filename)
+    if os.path.exists(full_path):
+        file = open(full_path, "r")
         translation_file.read(file)
         file.close()
 
-    return translation_file, filename
+    return translation_file, full_path
 
 def _restore_params_to_translation_dict(native_strings, translation_dict):
     """Strings stored in the translation files are filtered so that all
@@ -456,7 +447,7 @@ def _create_config_instance():
 
 def _create_db_instance(conf):
     return database.SQLite(os.path.join(
-        conf.get(Config.root_path),
+        os.path.abspath(conf.get(Config.xlf_repo_path)),
         conf.get(Config.database_path)
     ))
 
@@ -471,7 +462,7 @@ def run():
     elif conf.num_remaining_platforms() <= 0:
         logger.error("No platforms found in config file")
         exit(1)
-
+    
     orig_path = os.getcwd()
 
     while conf.num_remaining_platforms() > 0:
@@ -487,6 +478,12 @@ def run():
                 logger.error("Unable to determine next platform in config file")
 
         else:
+            xlf_repo_path = os.path.abspath(conf.get(Config.xlf_repo_path))
+            if not os.path.isdir(xlf_repo_path):
+                logger.error("XLF repo path does not exist at " + xlf_repo_path)
+                logger.error("Please clone it to this location")
+                exit(1)
+            
             config_logger(conf)
 
             logger.info("Running for platform " + conf.get(Config.platform))
@@ -513,9 +510,8 @@ def run():
                 logger.info("Writing string mapping to database")
                 db = _create_db_instance(conf)
 
-                xlf_submodule_path = conf.get(Config.xlf_submodule_path)
                 if should_use_vcs:
-                    db.update_from_vcs(vcs_class, xlf_submodule_path)
+                    db.update_from_vcs(vcs_class, xlf_repo_path)
 
                 db.connect()
                 db.write_string_mapping_for_platform(
@@ -545,12 +541,12 @@ def run():
                 db.disconnect()
                 
                 if should_use_vcs:
-                    vcs_class.mark_file_for_edit(db.filename, xlf_submodule_path)
+                    vcs_class.add_file(db.filename, xlf_repo_path)
 
                 if conf.get(Config.commit_vcs):
                     logger.info("Committing changes");
-                    vcs_class.commit_changes("Automatic localization commit")
-                    vcs_class.upload_changes()
+                    vcs_class.commit_changes("Automatic localization commit", xlf_repo_path)
+                    vcs_class.upload_changes(xlf_repo_path)
                 else:
                     logger.info(
                         "Not commiting changes since --commit-vcs not passed in"
@@ -559,7 +555,7 @@ def run():
             except Exception as e:
                 logger.exception(e)
                 logger.error("Reverting checkout")
-                vcs_class.revert_all()
+                vcs_class.revert_all(xlf_repo_path)
             finally:
                 logger.info(
                     "Finished running for platform " + conf.get(Config.platform)

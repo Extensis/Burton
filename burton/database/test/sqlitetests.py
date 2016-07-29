@@ -223,8 +223,6 @@ class SQLiteTests(unittest.TestCase):
         db.update_from_vcs(vcs, submodule_path)
 
         vcs.add_file.assert_called_with("some_full_path", submodule_path)
-        vcs.update_path.assert_called_with("some_full_path", submodule_path)
-        vcs.mark_file_for_edit.assert_called_with("some_full_path", submodule_path)
 
     @mock.patch.object(os.path, "exists")
     def test_connect_loads_schema_if_new_database(self, mock_function):

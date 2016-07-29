@@ -100,11 +100,6 @@ class Properties(Base):
                 os.path.basename(input_filename)
             )
 
-            if should_use_vcs:
-                vcs_class.add_file(output_filename)
-                vcs_class.update_path(output_filename)
-                vcs_class.mark_file_for_edit(output_filename)
-
             output_file_mapping = { }
 
             for key in input_mapping:
@@ -120,7 +115,7 @@ class Properties(Base):
             file.close()
             
             if should_use_vcs:
-                vcs_class.mark_file_for_edit(output_filename)
+                vcs_class.add_file(output_filename)
 
         return output_filename
 
