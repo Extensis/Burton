@@ -24,7 +24,13 @@ class XLF(Base):
     lang_attrib            = "{http://www.w3.org/XML/1998/namespace}lang"
 
     def read(self, file):
-        tree = lxml.etree.fromstring(file.read())
+        tree = None
+        
+        try:
+            tree = lxml.etree.fromstring(file.read())
+        except Exception as e:
+            tree = self._read_template()
+        
         group = tree.find(XLF.file_tag).find(XLF.body_tag).find(XLF.group_tag)
 
         for child in group:

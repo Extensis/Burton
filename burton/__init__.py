@@ -386,11 +386,11 @@ def _open_translation_file_for_language(conf, language, vcs_class):
 
     xlf_repo_path = os.path.abspath(conf.get(Config.xlf_repo_path))
 
-    if conf.get(Config.use_vcs):
-        vcs_class.add_file(filename, xlf_repo_path)
-
     full_path = os.path.join(xlf_repo_path, filename)
-    if os.path.exists(full_path):
+    if os.path.exists(full_path):        
+        if conf.get(Config.use_vcs):
+            vcs_class.add_file(filename, xlf_repo_path)
+    
         file = open(full_path, "r")
         translation_file.read(file)
         file.close()
