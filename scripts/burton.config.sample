@@ -1,0 +1,190 @@
+# For more information on how config files work, see the documentation for
+# burton.Config
+
+[DEFAULT]
+
+native_language = "English"
+source_path = "None"
+
+company_name = "Example"
+product_name = "Example Cross-Platform Product"
+contact_email = "dev@example.com"
+
+# The Python class responsible for version control operations. The currently
+# implemented opions are vcs.NoOp, vcs.Git, and vcs.Perforce. Use vcs.NoOp when you don't
+# want to use version control
+vcs_class = "burton.vcs.Git"
+
+# The extensions of the file to extract localizable strings. On Mac, these are
+# the strings you'd pass into NSLocalizedString, and on Windows, these are the
+# resource names in a RESX or RC file. These extensions are not regular
+# expressions, and do not need to be prefixed with a ".".
+extensions_to_parse = [ ]
+
+# The files from which to extract a mapping from the strings returned from
+# extensions_to_parse to native-language strings. On Mac, these will be
+# Localizable.strings et. al., and on Windows, they will be the same files
+# from extensions_to_parse. These are regular expressions, and need to be
+# double-escaped.
+mapping_files = [ ]
+
+# The logging level. Options are "debug", "info", "warning", "error", and
+# "critical". Messages from a lower level are not displayed.
+logging_level = "info"
+
+# A list of strings to exclude from localization. Adding strings to this list
+# will prevent them from being extracted from resource files, but will not
+# remove them from the translation files if they have already been translated.
+strings_to_ignore_file = "strings_to_ignore.txt"
+
+# The python class used for storing translations. Defaults to XLF. Don't change
+# unless you have implemented a new Python class.
+translation_files_class = "burton.translation.XLF"
+
+# A list of directories to search for resource files to localize.
+paths_to_localize = []
+
+# Whether or not to build the paths_to_localize by enumerating the
+# subdirectrories of source_path
+recursive_localization = false
+
+# A dictionary of file extensions to the Python classes that implement
+# operations to read and write these files. For non-translation files only.
+parsers_by_extension = {
+        "nib"        : "burton.parser.NIB",
+        "xib"        : "burton.parser.NIB",
+        "lproj"      : "burton.parser.LPROJ",
+        "strings"    : "burton.parser.Strings",
+        "resx"       : "burton.parser.RESX",
+        "rc"         : "burton.parser.RC",
+        "m"          : "burton.parser.MacSource",
+        "mm"         : "burton.parser.MacSource",
+        "h"          : "burton.parser.MacSource",
+        "properties" : "burton.parser.Properties",
+        "i18n.js"    : "burton.parser.Angular"
+    }
+
+# Paths to skip when searching for files. These are regular expressions, and
+# must be double-escaped.
+disallowed_paths = [
+        "build",
+        "ThirdParty",
+        "third-party",
+        "3rdParty",
+        "release",
+        "debug",
+        "output",
+        "lib",
+        "English\\.lproj",
+        "French\\.lproj",
+        "German\\.lproj",
+        "Italian\\.lproj",
+        "Japanese\\.lproj",
+        "Portuguese\\.lproj",
+        "Spanish\\.lproj",
+        "fr\\.lproj",
+        "de\\.lproj",
+        "it\\.lproj",
+        "ja\\.lproj",
+        "pt\\.lproj",
+        "es\\.lproj",
+        "testApp",
+        "samplecode",
+        "burton",
+        "builtObjects",
+        "English.jproj",
+        "French.jproj",
+        "German.lproj",
+        "Italian.lproj",
+        "Japanese.lproj",
+        "Portuguese.lproj",
+        "Spanish.lproj",
+        "fr.lproj",
+        "de.lproj",
+        "it.lproj",
+        "ja.lproj",
+        "pt.lproj",
+        "es.lproj",
+        "pt-PT.lproj",
+        "french.i18n.js",
+        "german.i18n.js",
+        "italian.i18n.js",
+        "japanese.i18n.js",
+        "portuguese.i18n.js",
+        "spanish.i18n.js"
+    ]
+
+language_codes = {
+        "English"    : "en",
+        "French"     : "fr-FR",
+        "German"     : "de-DE",
+        "Italian"    : "it-IT",
+        "Japanese"   : "ja-JP",
+        "Portuguese" : "pt-PT",
+        "Spanish"    : "es-ES"
+    }
+
+# A dictionary of languages to the translation files that hold translations for
+# those languages.
+files_by_language  = {
+        "French"     : "French.xlf",
+        "German"     : "German.xlf",
+        "Italian"    : "Italian.xlf",
+        "Japanese"   : "Japanese.xlf",
+        "Portuguese" : "Portuguese.xlf",
+        "Spanish"    : "Spanish.xlf"
+    }
+
+# Which languages to create localized resources for.
+output_languages = [
+        "French",
+        "German",
+        "Italian",
+        "Japanese",
+        "Portuguese",
+        "Spanish"
+    ]
+
+# The Python class which implements the database operations for burton. Do not
+# change this unless you've implemented a new Python class.
+database_adaptor = "burton.database.sqlite"
+
+# The path to save the database to. Note that this is a textual dump of the
+# database, and not a database file itself.
+database_path = "saved.sql"
+
+# The path to the repository that contains the XLF files
+xlf_repo_path = "../../../xlf"
+
+[Mac]
+extensions_to_parse = [ "nib", "xib", "m", "mm", "h" ]
+mapping_files = [ "\\.strings$" ]
+paths_to_localize = [ "mac" ]
+extensions_to_localize = [ "lproj" ]
+localization_output_dir = "mac/Resources"
+source_path = "mac"
+language_codes = {
+        "English"    : "en",
+        "French"     : "fr",
+        "German"     : "de",
+        "Italian"    : "it",
+        "Japanese"   : "ja",
+        "Portuguese" : "pt",
+        "Spanish"    : "es"
+    }
+
+[Windows]
+extensions_to_parse = [ "resx", "rc" ]
+mapping_files = [ "\\.resx$", "\\.rc$" ]
+localization_output_dir = "None"
+paths_to_localize = [ "windows" ]
+extensions_to_localize = [ "resx", "rc" ]
+source_path = "windows"
+
+[Angular]
+source_path = "web/app/i18n"
+extensions_to_parse = [ "i18n.js" ]
+mapping_files = [ "\\.i18n.js$" ]
+paths_to_localize = [ "web/app/i18n" ]
+extensions_to_localize = [ "i18n.ks" ]
+localization_output_dir = "web/app/i18n"
