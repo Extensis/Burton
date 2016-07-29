@@ -21,7 +21,7 @@ if len(sys.argv) > 1 and not sys.argv[1].startswith("-"):
     root_path = sys.argv[1]
 
 burton_path = os.path.join(
-    os.path.abspath(os.path.dirname(sys.argv[0])), "..", "..", "..", "burton"
+    os.path.abspath(os.path.dirname(sys.argv[0])), "..", "..", "burton"
 )
 
 if not os.path.isdir(burton_path):

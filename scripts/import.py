@@ -3,12 +3,16 @@ import sys
 
 root_path = os.getcwd()
 
-root_path = os.path.join(
-    root_path,
-    "burton"
+burton_path = os.path.join(
+    os.path.abspath(os.path.dirname(sys.argv[0])), "..", "burton"
 )
 
-sys.path.insert(0, root_path)
+if not os.path.isdir(burton_path):
+    logger.error("The burton repository does not exist at " + burton_path)
+    logger.error("Please clone burton to this path.")
+    sys.exit(1)
+
+sys.path.insert(0, burton_path)
 
 requirements = ["chardet", "lxml"]
 
