@@ -6,6 +6,7 @@ import os
 import burton
 from base import Base
 from strings import Strings
+from stringsdict import StringsDict
 from util import replace_params, restore_platform_specific_params
 
 class LPROJ(Base):
@@ -35,6 +36,19 @@ class LPROJ(Base):
             logger.error("Created new file " + output_directory)
 
         for filename in os.listdir(input_filename):
+            if filename.endswith(".stringsdict"):
+                stringsdict_parser = self._create_stringsdict_parser()
+                stringsdict_parser.translate(
+                    os.path.join(input_filename, filename),
+                    output_directory,
+                    mapping,
+                    language,
+                    language_code,
+                    should_use_vcs,
+                    vcs_class
+                )
+                
+                
             if filename.endswith(".strings"):
                 strings_parser = self._create_strings_parser()
                 input_mapping = \
@@ -77,3 +91,6 @@ class LPROJ(Base):
 
     def _create_strings_parser(self):
         return Strings()
+    
+    def _create_stringsdict_parser(self):
+        return StringsDict()

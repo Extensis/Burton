@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Activate %lu Fonts</key>
+        <dict>
+            <key>NSStringLocalizedFormatKey</key>
+            <string>%#@variable_0@</string>
+            <key>variable_0</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>lu</string>
+                <key>zero</key>
+                <string>Activate %lu Fonts</string>
+                <key>one</key>
+                <string>Activate %lu Font</string>
+                <key>two</key>
+                <string>Activate %lu Fonts</string>
+                <key>few</key>
+                <string>Activate %lu Fonts</string>
+                <key>many</key>
+                <string>Activate %lu Fonts</string>
+                <key>other</key>
+                <string>Activate %lu Fonts</string>
+            </dict>
+        </dict>
+        <key>Deactivate %lu Fonts</key>
+        <dict>
+            <key>NSStringLocalizedFormatKey</key>
+            <string>%#@variable_0@</string>
+            <key>variable_0</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>lu</string>
+                <key>zero</key>
+                <string>Deactivate %lu Fonts</string>
+                <key>one</key>
+                <string>Deactivate %lu Font</string>
+                <key>two</key>
+                <string>Deactivate %lu Fonts</string>
+                <key>few</key>
+                <string>Deactivate %lu Fonts</string>
+                <key>many</key>
+                <string>Deactivate %lu Fonts</string>
+                <key>other</key>
+                <string>Deactivate %lu Fonts</string>
+            </dict>
+        </dict>
+    </dict>
+</plist>

@@ -12,16 +12,22 @@ class LPROJTests(unittest.TestCase):
     @mock.patch.object(os, "listdir")
     @mock.patch.object(os, "mkdir")
     def test_translate(self, mkdir_func, listdir_func):
-        listdir_func.return_value = [ "Localizable.strings" ]
+        listdir_func.return_value = [ "Localizable.strings", "Localizable.stringsdict" ]
         lproj_parser = parser.LPROJ()
         test_file = teststringio.TestStringIO()
         fake_strings_parser = parser.Strings()
+        fake_stringsdict_parser = parser.StringsDict();
         vcs_class = mock.Mock()
 
         lproj_parser._open_file = mock.Mock(return_value = test_file)
         lproj_parser._create_strings_parser = mock.Mock(
             return_value = fake_strings_parser
         )
+        
+        lproj_parser._create_stringsdict_parser = mock.Mock(
+            return_value = fake_stringsdict_parser
+        )
+        fake_stringsdict_parser.translate = mock.Mock()
 
         string_mapping = stringmapping.StringMapping()
         string_mapping.add_mapping(
@@ -34,14 +40,16 @@ class LPROJTests(unittest.TestCase):
             return_value = string_mapping
         )
 
+        translation_dict = {
+            u"Translation for some string" :
+                u"Traduzione di Bablefish per questa stringa",
+            u"Extra string" : u"Not in file to localize",
+        };
+
         output_filenames = lproj_parser.translate(
             "en.lproj",
             "Resources",
-            {
-                u"Translation for some string" :
-                    u"Traduzione di Bablefish per questa stringa",
-                u"Extra string" : u"Not in file to localize",
-            },
+            translation_dict,
             "Italian",
             "it",
             True,
@@ -65,6 +73,16 @@ class LPROJTests(unittest.TestCase):
             """"NewString" = "Untranslated string";
 "SomeString" = "Traduzione di Bablefish per questa stringa";
 InfoPlistVar = "Untranslated string";\n"""
+        )
+
+        fake_stringsdict_parser.translate.assert_called_with(
+            os.path.join("en.lproj", "Localizable.stringsdict"),
+            os.path.join("Resources", "it.lproj"),
+            translation_dict,
+            "Italian",
+            "it",
+            True,
+            vcs_class
         )
 
         vcs_class.add_file.assert_called_with(

@@ -8,4 +8,5 @@ from properties import Properties
 from rc import RC
 from resx import RESX
 from strings import Strings
+from stringsdict import StringsDict
 from util import *
