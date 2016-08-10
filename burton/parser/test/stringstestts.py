@@ -18,6 +18,7 @@ other string"; // End comment
 string";
 "Could not open font \\"{0}\\"." = "Could not open font \\"{0}\\".";
 InfoPlistVariable = /* Middle comment */ "Info Plist Variable";
+"XTK-jj-3ot.text" = "base localization string";
 """
 
     def test_open_file(self):
@@ -47,7 +48,8 @@ InfoPlistVariable = /* Middle comment */ "Info Plist Variable";
                 u"A string that translates to itself",
                 u"YetAnotherString",
                 u"Could not open font \\\"{0}\\\".",
-                u"InfoPlistVariable"
+                u"InfoPlistVariable",
+                u"base localization string"
             ])
         )
 
@@ -70,7 +72,8 @@ InfoPlistVariable = /* Middle comment */ "Info Plist Variable";
                 u"YetAnotherString" : u"Yet another\\nstring",
                 u"Could not open font \"{0}\"." :
                     u"Could not open font \"{0}\".",
-                u"InfoPlistVariable" : u"Info Plist Variable"
+                u"InfoPlistVariable" : u"Info Plist Variable",
+                u"base localization string": u"base localization string"
             }
         )
 

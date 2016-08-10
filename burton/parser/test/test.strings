@@ -8,3 +8,4 @@ other string"; // End comment
 string";
 "Could not open font \"{0}\"." = "Could not open font \"{0}\".";
 InfoPlistVariable = /* Middle comment */ "Info Plist Variable";
+"XTK-jj-3ot.text" = "base localization string";

@@ -12,11 +12,20 @@ from util import detect_encoding
 class Strings(Base):
     def __init__(self):
         Base.__init__(self)
+        self.baseLocalizationRegex = re.compile(
+            '\w{3}-\w{2}-\w{3}\.(placeholder|text|title|normalTitle)'
+        )
 
     def extract_strings_from_filename(self, filename):
         return_values = set([])
 
         def _add_key(key, value):
+            if key and key[0] == '"':
+                key = key[1:-1]
+
+            if self.baseLocalizationRegex.match(key):
+                key = value
+
             if key and key[0] == '"':
                 key = key[1:-1]
 
@@ -35,6 +44,9 @@ class Strings(Base):
 
             if value and value[0] == '"':
                 value = value[1:-1]
+            
+            if self.baseLocalizationRegex.match(key):
+                key = value
 
             string_mapping.add_mapping(key, value)
 
