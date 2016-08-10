@@ -312,12 +312,14 @@ def create_localized_resources(conf, native_strings, vcs_class):
             vcs_class
         )
 
-        translation_dict = _restore_params_to_translation_dict(
-            native_strings,
-            translation_file.translation_dict
-        )
+        translation_dict = translation_file.translation_dict
 
         _mark_untranslated_strings(translation_dict)
+
+        translation_dict = _restore_params_to_translation_dict(
+            native_strings,
+            translation_dict
+        )
 
         paths = []
 
