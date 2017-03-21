@@ -1,3 +1,4 @@
+import codecs
 import collections
 import copy
 import logging
@@ -251,6 +252,36 @@ class BurtonTests(unittest.TestCase):
             None
         )
 
+    def test_update_base_localizations(self):
+        output_filename = "Output.strings"
+        config_dict = {
+            burton.Config.base_localization_paths: { "Test.storyboard": output_filename }
+        }
+
+        def _config_get(key):
+            return config_dict[key]
+
+        conf = mock.Mock()
+        conf.get.side_effect = _config_get
+
+        original_cwd = os.getcwd()
+
+        try:
+            os.chdir(os.path.join(os.path.dirname(__file__), "filesystem"))
+            if os.path.exists(output_filename):
+                os.remove(output_filename)
+            burton.update_base_localizations(conf)
+        except Exception as e:
+            pass
+        finally:
+            self.assertTrue(os.path.exists(output_filename))
+            self.assertTrue(
+                "Test String" in codecs.open(output_filename, "r", "utf-16-le").read()
+            )
+
+            os.remove(output_filename)
+            os.chdir(original_cwd)
+
     @mock.patch.object(burton, "_get_extensions_by_parser")
     @mock.patch.object(burton, "find_files_for_extension" )
     def test_extract_mapping(self, find_func, extension_func):
@@ -311,7 +342,7 @@ class BurtonTests(unittest.TestCase):
             ),
             (burton.logger_name, "ERROR", "\tunmapped string\n"),
         )
-        
+
         captured_log.uninstall()
 
     @mock.patch("__builtin__.open")
@@ -368,7 +399,7 @@ class BurtonTests(unittest.TestCase):
                 "There are untranslated strings in test filename"
             ),
         )
-        
+
         captured_log.uninstall()
 
     @mock.patch("__builtin__.open")
@@ -595,6 +626,7 @@ class BurtonTests(unittest.TestCase):
     @mock.patch.object(burton, "setup_default_logger")
     @mock.patch.object(burton, "config_logger")
     @mock.patch.object(burton, "create_vcs_class")
+    @mock.patch.object(burton, "update_base_localizations")
     @mock.patch.object(burton, "extract_strings")
     @mock.patch.object(burton, "extract_mapping")
     @mock.patch.object(burton, "check_for_unmapped_strings")
@@ -609,6 +641,7 @@ class BurtonTests(unittest.TestCase):
         check_for_unmapped_strings_func,
         extract_mapping_func,
         extract_strings_func,
+        update_base_localizations_func,
         create_vcs_class_func,
         config_logger_func,
         setup_default_logger_func,
@@ -727,6 +760,8 @@ class BurtonTests(unittest.TestCase):
                 [ "Mapping1" ],
                 vcs_class
             )
+
+            update_base_localizations_func.assert_called_with(conf)
 
             self.assertTrue(mock_db.disconnect.called)
 
@@ -858,7 +893,7 @@ class BurtonTests(unittest.TestCase):
                 "Unable to parse command-line options"
             )
         )
-        
+
         captured_log.uninstall()
 
         exit_func.assert_called_with(1)
@@ -906,7 +941,7 @@ class BurtonTests(unittest.TestCase):
                 "Unable to determine next platform in config file"
             )
         )
-        
+
         captured_log.uninstall()
 
         exit_func.assert_called_with(1)

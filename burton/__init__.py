@@ -2,6 +2,7 @@ import cProfile
 import logging
 import os
 import re
+import subprocess
 import sys
 
 import database
@@ -189,6 +190,15 @@ def check_for_unmapped_strings(extracted_strings, string_mapping):
         )
         logger.error("\t" + "\n\t".join(unmapped_strings) + "\n")
 
+def update_base_localizations(conf):
+    paths = conf.get(Config.base_localization_paths)
+    for nib in paths:
+        subprocess.Popen(
+            [ "ibtool", nib, "--generate-strings-file", paths[nib] ],
+            stdout = None,
+            stderr = None
+        ).wait()
+
 def update_translation_file(
     conf,
     platform_translation_keys,
@@ -375,7 +385,7 @@ def _get_localized_resource_instance(conf, extension):
 
 def _open_translation_file_for_language(conf, language, vcs_class):
     filename = conf.get(Config.files_by_language)[language]
-    
+
     cls = _class_from_string(conf.get(Config.translation_files_class))
     translation_file = cls(
         language,
@@ -389,10 +399,10 @@ def _open_translation_file_for_language(conf, language, vcs_class):
     xlf_repo_path = os.path.abspath(conf.get(Config.xlf_repo_path))
 
     full_path = os.path.join(xlf_repo_path, filename)
-    if os.path.exists(full_path):        
+    if os.path.exists(full_path):
         if conf.get(Config.use_vcs):
             vcs_class.add_file(filename, xlf_repo_path)
-    
+
         file = open(full_path, "r")
         translation_file.read(file)
         file.close()
@@ -464,7 +474,7 @@ def run():
     elif conf.num_remaining_platforms() <= 0:
         logger.error("No platforms found in config file")
         exit(1)
-    
+
     orig_path = os.getcwd()
 
     while conf.num_remaining_platforms() > 0:
@@ -485,7 +495,7 @@ def run():
                 logger.error("XLF repo path does not exist at " + xlf_repo_path)
                 logger.error("Please clone it to this location")
                 exit(1)
-            
+
             config_logger(conf)
 
             logger.info("Running for platform " + conf.get(Config.platform))
@@ -501,6 +511,8 @@ def run():
                 source_path = conf.get(Config.source_path)
                 if source_path != "None":
                     os.chdir(source_path)
+
+                update_base_localizations(conf)
 
                 extracted_strings = extract_strings(conf, strings_to_ignore)
                 string_mapping    = extract_mapping(conf, strings_to_ignore)
@@ -541,7 +553,7 @@ def run():
                 )
 
                 db.disconnect()
-                
+
                 if should_use_vcs:
                     vcs_class.add_file(db.filename, xlf_repo_path)
 

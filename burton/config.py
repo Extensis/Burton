@@ -67,6 +67,7 @@ class Config(object):
     extensions_to_localize   = "extensions_to_localize"
     abort_if_no_translations = "abort_if_no_translations"
     xlf_repo_path            = "xlf_repo_path"
+    base_localization_paths  = "base_localization_paths"
 
     # Constants for command-line options
     root_path          = "root_path"
@@ -100,6 +101,7 @@ class Config(object):
         translation_files_class  : "translation.XLF",
         abort_if_no_translations : "false",
         xlf_repo_path            : None,
+        base_localization_paths  : {},
         language_codes           : {
             "English"    : "en-US",
             "French"     : "fr-FR",

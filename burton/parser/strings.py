@@ -44,7 +44,7 @@ class Strings(Base):
 
             if value and value[0] == '"':
                 value = value[1:-1]
-            
+
             if self.baseLocalizationRegex.match(key):
                 key = value
 
@@ -53,31 +53,6 @@ class Strings(Base):
         self._parse(filename, _add_mapping)
 
         return string_mapping
-
-    def regenerate_base_localization(self, nib_filename, strings_filename):
-        temp_filename = "tmp.strings"
-        old_mapping = self.extract_mapping_from_filename(strings_filename).get_string_mapping_dict()
-        
-        subprocess.Popen(
-            [ "ibtool", nib_filename, "--generate-strings-file", temp_filename ],
-            stdout = None,
-            stderr = None,
-        ).wait()
-        
-        new_mapping = self.extract_mapping_from_filename(temp_filename).get_string_mapping_dict()
-        
-        if set(old_mapping.keys()) != set(new_mapping.keys()):        
-            for key in new_mapping:
-                if key in old_mapping:
-                    new_mapping[key] = old_mapping[key]
-        
-            file = codecs.open(strings_filename, "w", "utf-8")
-        
-            self.write_mapping(file, new_mapping)
-        
-            file.close()
-        
-        os.remove(temp_filename)
 
     def _parse(self, filename, func):
         file, encoding = self._open_file(filename)
