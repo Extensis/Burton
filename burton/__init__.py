@@ -190,7 +190,7 @@ def check_for_unmapped_strings(extracted_strings, string_mapping):
         )
         logger.warning("\t" + "\n\t".join(unmapped_strings) + "\n")
 
-def update_base_localizations(conf):
+def update_base_localizations(conf, vcs_class):
     paths = conf.get(Config.base_localization_paths)
     for nib in paths:
         subprocess.Popen(
@@ -198,6 +198,8 @@ def update_base_localizations(conf):
             stdout = None,
             stderr = None
         ).wait()
+
+        vcs_class.add_file(paths[nib])
 
 def update_translation_file(
     conf,
@@ -512,7 +514,7 @@ def run():
                 if source_path != "None":
                     os.chdir(source_path)
 
-                update_base_localizations(conf)
+                update_base_localizations(conf, vcs_class)
 
                 extracted_strings = extract_strings(conf, strings_to_ignore)
                 string_mapping    = extract_mapping(conf, strings_to_ignore)

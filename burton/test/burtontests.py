@@ -264,13 +264,15 @@ class BurtonTests(unittest.TestCase):
         conf = mock.Mock()
         conf.get.side_effect = _config_get
 
+        vcs_class = mock.Mock()
+
         original_cwd = os.getcwd()
 
         try:
             os.chdir(os.path.join(os.path.dirname(__file__), "filesystem"))
             if os.path.exists(output_filename):
                 os.remove(output_filename)
-            burton.update_base_localizations(conf)
+            burton.update_base_localizations(conf, vcs_class)
         except Exception as e:
             pass
         finally:
@@ -278,6 +280,8 @@ class BurtonTests(unittest.TestCase):
             self.assertTrue(
                 "Test String" in codecs.open(output_filename, "r", "utf-16-le").read()
             )
+
+            vcs_class.add_file.assert_called_with(output_filename)
 
             os.remove(output_filename)
             os.chdir(original_cwd)
@@ -761,7 +765,7 @@ class BurtonTests(unittest.TestCase):
                 vcs_class
             )
 
-            update_base_localizations_func.assert_called_with(conf)
+            update_base_localizations_func.assert_called_with(conf, vcs_class)
 
             self.assertTrue(mock_db.disconnect.called)
 
