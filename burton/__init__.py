@@ -174,7 +174,7 @@ def _is_mapping_file(file, conf):
     return False
 
 def check_for_unmapped_strings(extracted_strings, string_mapping):
-    """Logs an error for each string that does not have a native translation"""
+    """Logs a warning for each string that does not have a native translation"""
     unmapped_strings = [ ]
     missing_strings  = [ ]
     logger           = logging.getLogger(logger_name)
@@ -185,10 +185,10 @@ def check_for_unmapped_strings(extracted_strings, string_mapping):
             unmapped_strings.append(string)
 
     if len(unmapped_strings) > 0:
-        logger.error(
+        logger.warning(
             "The following strings have not been mapped to a native string"
         )
-        logger.error("\t" + "\n\t".join(unmapped_strings) + "\n")
+        logger.warning("\t" + "\n\t".join(unmapped_strings) + "\n")
 
 def update_base_localizations(conf):
     paths = conf.get(Config.base_localization_paths)
