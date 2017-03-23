@@ -337,10 +337,10 @@ class BurtonTests(unittest.TestCase):
             (burton.logger_name, "INFO", "Checking for unmapped strings"),
             (
                 burton.logger_name,
-                "ERROR",
+                "WARNING",
                 "The following strings have not been mapped to a native string"
             ),
-            (burton.logger_name, "ERROR", "\tunmapped string\n"),
+            (burton.logger_name, "WARNING", "\tunmapped string\n"),
         )
 
         captured_log.uninstall()
