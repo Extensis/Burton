@@ -42,12 +42,15 @@ class RESX(Base):
         def _add_mapping(key, value, node):
             string_mapping.add_mapping(key, value)
 
-        self._parse(tree, _add_mapping)
+        self._parse(tree, filename, _add_mapping)
 
         return string_mapping
 
-    def _parse(self, tree, func):
+    def _parse(self, tree, filename, func):
         dollarsign_this_replacement = self._find_dollarsign_this(tree)
+        if dollarsign_this_replacement is None:
+            dollarsign_this_replacement = filename
+
         for node in tree.findall(RESX.data_tag):
             if RESX.space_attribute in node.attrib \
                and node.attrib[RESX.space_attribute] == RESX.preserve_value:
@@ -113,7 +116,7 @@ class RESX(Base):
                         mapping[filter_string(value)]
 
 
-            self._parse(tree, _rewrite_mapping)
+            self._parse(tree, input_filename, _rewrite_mapping)
 
             file = self._open_file_for_writing(output_filename)
             lxml.etree.ElementTree(element = tree).write(
@@ -122,9 +125,9 @@ class RESX(Base):
                 pretty_print = True,
                 encoding = "utf-8"
             )
-            
+
             file.close()
-            
+
             if should_use_vcs:
                 vcs_class.add_file(output_filename)
 
