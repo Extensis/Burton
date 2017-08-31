@@ -60,7 +60,7 @@ def replace_params(raw_string):
     Because of this, it is possible that the replaced string will be identical
     to the original string
     """
-    printf_flags         = " -+#1234567890"
+    printf_flags         = "-+#1234567890"
     printf_width         = "1234567890*"
     printf_precision_sep = "."
     printf_precision     = printf_width
