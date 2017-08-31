@@ -25,12 +25,12 @@ class XLF(Base):
 
     def read(self, file):
         tree = None
-        
+
         try:
             tree = lxml.etree.fromstring(file.read())
         except Exception as e:
             tree = self._read_template()
-        
+
         group = tree.find(XLF.file_tag).find(XLF.body_tag).find(XLF.group_tag)
 
         for child in group:

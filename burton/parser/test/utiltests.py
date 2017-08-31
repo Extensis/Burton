@@ -24,9 +24,17 @@ class UtilTests(unittest.TestCase):
 
     def test_replace_params(self):
         self.assertEquals(
-            parser.replace_params("% -3.3lld of {5} %$ {x} %d%%%d %"),
+            parser.replace_params("%-3.3lld of {5} %$ {x} %d%%%d %"),
             (   "{0} of {1} %$ {x} {2}%%{3} %",
-                [ "% -3.3lld", "{5}",  "%d", "%d" ]
+                [ "%-3.3lld", "{5}",  "%d", "%d" ]
+            )
+        )
+
+        self.assertEquals(
+            parser.replace_params("{0}% complete"),
+            (
+                "{0}% complete",
+                [ "{0}" ]
             )
         )
 

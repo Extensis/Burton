@@ -160,7 +160,7 @@ class SQLiteTests(unittest.TestCase):
         db.write_string_mapping_for_platform(
             "Mac",
             {
-                "SomeString" : "% 03d of %03.3lld for {0} %@",
+                "SomeString" : "%03d of %03.3lld for {0} %@",
             }
         )
 
@@ -175,14 +175,14 @@ class SQLiteTests(unittest.TestCase):
         self.assertEquals(
             cursor.execute("select * from native_translations").fetchall(),
             [
-                (1, 1, 1, "% 03d of %03.3lld for {0} %@"),
+                (1, 1, 1, "%03d of %03.3lld for {0} %@"),
             ],
         )
 
         self.assertEquals(
             cursor.execute("select * from replaced_params").fetchall(),
             [
-                (1, 1, 1, 0, u"% 03d" ),
+                (1, 1, 1, 0, u"%03d" ),
                 (2, 1, 1, 1, u"%03.3lld"),
                 (3, 1, 1, 2, u"{0}"     ),
                 (4, 1, 1, 3, u"%@"      ),
@@ -192,21 +192,21 @@ class SQLiteTests(unittest.TestCase):
         db.write_string_mapping_for_platform(
             "Mac",
             {
-                "SomeString" : "% 03d of %03.3lld",
+                "SomeString" : "%03d of %03.3lld",
             }
         )
 
         self.assertEquals(
             cursor.execute("select * from native_translations").fetchall(),
             [
-                (1, 1, 1, "% 03d of %03.3lld"),
+                (1, 1, 1, "%03d of %03.3lld"),
             ],
         )
 
         self.assertEquals(
             cursor.execute("select * from replaced_params").fetchall(),
             [
-                (1, 1, 1, 0, u"% 03d" ),
+                (1, 1, 1, 0, u"%03d" ),
                 (2, 1, 1, 1, u"%03.3lld"),
             ],
         )
@@ -219,7 +219,7 @@ class SQLiteTests(unittest.TestCase):
         vcs = mock.Mock()
         db = database.SQLite("some_filename")
         submodule_path = "submodule"
-        
+
         db.update_from_vcs(vcs, submodule_path)
 
         vcs.add_file.assert_called_with("some_full_path", submodule_path)
@@ -570,12 +570,12 @@ class SQLiteTests(unittest.TestCase):
         db.connect()
         db.write_string_mapping_for_platform(
             "Mac",
-            { "SomeString" : "% 03d of %03.3lld for {0} %@", }
+            { "SomeString" : "%03d of %03.3lld for {0} %@", }
         )
 
         self.assertEquals(
             db.get_native_translations_for_platform("Mac"),
-            [ "% 03d of %03.3lld for {0} %@" ]
+            [ "%03d of %03.3lld for {0} %@" ]
         )
 
         db.disconnect()
