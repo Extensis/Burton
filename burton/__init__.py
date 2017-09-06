@@ -1,4 +1,5 @@
 import cProfile
+import glob
 import logging
 import os
 import re
@@ -191,15 +192,20 @@ def check_for_unmapped_strings(extracted_strings, string_mapping):
         logger.warning("\t" + "\n\t".join(unmapped_strings) + "\n")
 
 def update_base_localizations(conf, vcs_class):
-    paths = conf.get(Config.base_localization_paths)
-    for nib in paths:
-        subprocess.Popen(
-            [ "ibtool", nib, "--generate-strings-file", paths[nib] ],
-            stdout = None,
-            stderr = None
-        ).wait()
+    patterns = conf.get(Config.base_localization_paths)
+    for pattern in patterns:
+        paths = glob.glob(pattern)
+        for path in paths:
+            output_path = path.rsplit('.', 1)[0] + '.strings'
+            output_path = output_path.replace('Base.lproj', 'en.lproj')
 
-        vcs_class.add_file(paths[nib])
+            subprocess.Popen(
+                [ "ibtool", path, "--generate-strings-file", output_path ],
+                stdout = None,
+                stderr = None
+            ).wait()
+
+            vcs_class.add_file(output_path)
 
 def update_translation_file(
     conf,
