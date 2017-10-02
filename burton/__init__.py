@@ -345,6 +345,8 @@ def create_localized_resources(conf, native_strings, vcs_class):
             for root, dirs, files in os.walk(conf.get(Config.source_path)):
                 for dir in dirs:
                     paths.append(os.path.join(root, dir))
+
+                paths.append(root)
         else:
             paths = conf.get(Config.paths_to_localize)
 
