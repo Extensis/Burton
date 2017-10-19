@@ -75,10 +75,10 @@ class RESXTests(unittest.TestCase):
         self.assertEquals(
             extracted_strings,
             set([
-                u"SomeString",
-                u"SomeOtherString",
-                u"YetAnotherString",
-                u"ToolTipString",
+                u"SomeString-some_file",
+                u"SomeOtherString-some_file",
+                u"YetAnotherString-some_file",
+                u"ToolTipString-some_file",
             ])
         )
 
@@ -96,10 +96,10 @@ class RESXTests(unittest.TestCase):
         self.assertEquals(
             string_mapping.string_mapping_dict,
             {
-                u"SomeString"       : u"Translation for some string",
-                u"SomeOtherString"  : u"Translation for the other string",
-                u"YetAnotherString" : u"Yet another translation",
-                u"ToolTipString"    : u"A ToolTip String",
+                u"SomeString-some_file"       : u"Translation for some string",
+                u"SomeOtherString-some_file"  : u"Translation for the other string",
+                u"YetAnotherString-some_file" : u"Yet another translation",
+                u"ToolTipString-some_file"    : u"A ToolTip String",
             }
         )
 
