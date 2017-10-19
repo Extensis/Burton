@@ -40,7 +40,7 @@ class RESX(Base):
         tree = lxml.etree.fromstring(self._read_file(filename))
 
         def _add_mapping(key, value, node):
-            string_mapping.add_mapping(key, value)
+            string_mapping.add_mapping(key + '-' + filename, value)
 
         self._parse(tree, filename, _add_mapping)
 

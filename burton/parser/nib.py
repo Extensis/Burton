@@ -4,6 +4,8 @@ import subprocess
 
 from base import Base
 
+import burton
+
 class NIB(Base):
     def __init__(self):
         Base.__init__(self)
@@ -45,9 +47,17 @@ class NIB(Base):
                 for string in strings:
                     string = string.text
                     if string is not None and len(string) > 0:
-                        return_values.add(unicode(string))
+                        return_values.add(unicode(string.replace("\n", "\\n")))
 
         return return_values
+
+    def extract_mapping_from_filename(self, filename):
+        string_mapping = burton.StringMapping(filename = filename)
+
+        for string in self.extract_strings_from_filename(filename):
+            string_mapping.add_mapping(string, string)
+
+        return string_mapping
 
     def _get_plist_from_nib_file(self, filename):
         return subprocess.Popen(
