@@ -253,7 +253,7 @@ class BurtonTests(unittest.TestCase):
         )
 
     def test_update_base_localizations(self):
-        output_filename = "Output.strings"
+        output_filename = "Test.strings"
         config_dict = {
             burton.Config.base_localization_paths: { "Test.storyboard": output_filename }
         }
