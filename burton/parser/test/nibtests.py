@@ -57,6 +57,22 @@ class NIBTests(unittest.TestCase):
         for string in extracted_strings:
             self.assertEquals(type(string), types.UnicodeType)
 
+    def test_extract_mapping_from_filename(self):
+        extractor = parser.NIB()
+        extractor._get_plist_from_nib_file = mock.Mock(
+            return_value = NIBTests.sample_nib
+        )
+
+        mapping = extractor.extract_mapping_from_filename("some_file")
+
+        self.assertEquals(
+            mapping.string_mapping_dict,
+            {
+                u"SomeString": u"SomeString",
+                u"SomeOtherString": u"SomeOtherString"
+            }
+        )
+
     def test_extracts_strings_from_nib_package(self):
         params = []
         def store_param(param):
