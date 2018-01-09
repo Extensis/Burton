@@ -8,7 +8,11 @@ class BaseTests(unittest.TestCase):
         trans.add_translation(u"Some native string", u"Some translation")
         self.assertEquals(
             trans.translation_dict,
-            { u"Some native string" : u"Some translation" }
+            {
+                u"Some native string"             : u"Some translation",
+                u"Some native string..."          : u"Some translation...",
+                u"Some native string\xe2\x80\xa6" : u"Some translation\xe2\x80\xa6"
+            }
         )
 
     def test_delete_translation(self):
@@ -16,7 +20,11 @@ class BaseTests(unittest.TestCase):
         trans.add_translation(u"Some native string", u"Some translation")
         self.assertEquals(
             trans.translation_dict,
-            { u"Some native string" : u"Some translation" }
+            {
+                u"Some native string"             : u"Some translation",
+                u"Some native string..."          : u"Some translation...",
+                u"Some native string\xe2\x80\xa6" : u"Some translation\xe2\x80\xa6"
+            }
         )
 
         trans.delete_translation(u"Some native string")
@@ -45,9 +53,15 @@ class BaseTests(unittest.TestCase):
         self.assertEquals(
             trans1.translation_dict,
             {
-                u"Some native string" : u"Different translation",
-                u"Some other string"  : u"Some other translation",
-                u"Some new string"    : u"Some new translation",
+                u"Some native string"             : u"Different translation",
+                u"Some native string..."          : u"Different translation...",
+                u"Some native string\xe2\x80\xa6" : u"Different translation\xe2\x80\xa6",
+                u"Some other string"              : u"Some other translation",
+                u"Some other string..."           : u"Some other translation...",
+                u"Some other string\xe2\x80\xa6"  : u"Some other translation\xe2\x80\xa6",
+                u"Some new string"                : u"Some new translation",
+                u"Some new string..."             : u"Some new translation...",
+                u"Some new string\xe2\x80\xa6"    : u"Some new translation\xe2\x80\xa6",
             }
         )
 
@@ -60,7 +74,11 @@ class BaseTests(unittest.TestCase):
 
         self.assertEquals(
             trans.translation_dict,
-            { u"Some native string" : u"Some translation" }
+            {
+                u"Some native string"             : u"Some translation",
+                u"Some native string..."          : u"Some translation...",
+                u"Some native string\xe2\x80\xa6" : u"Some translation\xe2\x80\xa6"
+            }
         )
 
     def test_remove_translated_strings(self):

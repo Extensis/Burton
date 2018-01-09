@@ -83,7 +83,11 @@ class XLFTests(unittest.TestCase):
             {
                 "Some untranslated string {0}" : None,
                 u"Some translated string" :
-                    u"Traduzione di Bablefish per questa stringa"
+                    u"Traduzione di Bablefish per questa stringa",
+                u"Some translated string..." :
+                    u"Traduzione di Bablefish per questa stringa...",
+                u"Some translated string\xe2\x80\xa6" :
+                    u"Traduzione di Bablefish per questa stringa\xe2\x80\xa6"
             }
         )
 

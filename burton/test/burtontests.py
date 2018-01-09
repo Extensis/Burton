@@ -382,7 +382,7 @@ class BurtonTests(unittest.TestCase):
         )
 
         self.assertEquals(
-            translation_file.translation_dict,
+            translation_file._translation_dict,
             {
                 "String1"   : "Translation for String1",
                 "String{0}" : None,
