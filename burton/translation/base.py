@@ -46,7 +46,26 @@ class Base(object):
         """This method returns a dictionary containing the translations held in
         this object. The return value can be freely modified without affecting
         the contents of this object"""
-        return self._translation_dict.copy()
+        copied_dict = self._translation_dict.copy()
+
+        ellipsis = u'\xe2\x80\xa6'
+        three_dots = '...'
+
+        for key in copied_dict.keys():
+            if not key.endswith(ellipsis) and not key.endswith(three_dots):
+                mac_key = key + ellipsis
+                win_key = key + three_dots
+
+                value = copied_dict[key]
+
+                if value is not None:
+                    if not mac_key in copied_dict:
+                        copied_dict[mac_key] = value + ellipsis
+
+                    if not win_key in copied_dict:
+                        copied_dict[win_key] = value + three_dots
+
+        return copied_dict
 
     translation_dict = property(get_translation_dict, None)
 

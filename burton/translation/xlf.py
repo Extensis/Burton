@@ -40,7 +40,7 @@ class XLF(Base):
 
                 self.add_translation(source, target)
 
-        if len(self.get_translation_dict()) == 0:
+        if len(self._translation_dict) == 0:
             raise Exception(
                 "Attempted to an read XLF file with no translations."
             )
