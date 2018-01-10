@@ -15,6 +15,33 @@ class BaseTests(unittest.TestCase):
             }
         )
 
+    def test_add_translation_with_ellipses(self):
+        trans = translation.Base("Italian", "it-IT", "en", "", "", "")
+
+        trans.add_translation(u"Translated D...", None)
+        trans.add_translation(u"Translated E\xe2\x80\xa6", None)
+        trans.add_translation(u"Translated D", u"Translated D")
+        trans.add_translation(u"Translated E", u"Translated E")
+        trans.add_translation(u"Untranslated D...", None)
+        trans.add_translation(u"Untranslated E\xe2\x80\xa6", None)
+        trans.add_translation(u"Translated D...", None)
+        trans.add_translation(u"Translated E\xe2\x80\xa6", None)
+        trans.add_translation(u"Translated F...", u"Translated F...")
+        trans.add_translation(u"Translated G\xe2\x80\xa6", u"Translated G\xe2\x80\xa6")
+
+
+        self.assertEquals(
+            trans._translation_dict,
+            {
+                u"Translated D"             : u"Translated D",
+                u"Translated E"             : u"Translated E",
+                u"Untranslated D"           : None,
+                u"Untranslated E"           : None,
+                u"Translated F..."          : u"Translated F...",
+                u"Translated G\xe2\x80\xa6" : u"Translated G\xe2\x80\xa6"
+            }
+        )
+
     def test_delete_translation(self):
         trans = translation.Base("Italian", "it-IT", "en", "", "", "")
         trans.add_translation(u"Some native string", u"Some translation")
