@@ -1,3 +1,6 @@
+ellipsis = u'\xe2\x80\xa6'
+three_dots = '...'
+
 class Base(object):
     """This class is the base of the translation hierarchy. Translation objects
     represent a mapping from native-language strings into strings of another
@@ -28,6 +31,13 @@ class Base(object):
         translation for the native-language string, if any.
         """
 
+        if translation is None:
+            if native_string.endswith(ellipsis) or native_string.endswith(three_dots):
+                native_string = native_string[:-3]
+
+                if native_string in self._translation_dict:
+                    return
+
         self._translation_dict[native_string] = translation
 
     def delete_translation(self, native_string):
@@ -47,9 +57,6 @@ class Base(object):
         this object. The return value can be freely modified without affecting
         the contents of this object"""
         copied_dict = self._translation_dict.copy()
-
-        ellipsis = u'\xe2\x80\xa6'
-        three_dots = '...'
 
         for key in copied_dict.keys():
             if not key.endswith(ellipsis) and not key.endswith(three_dots):
