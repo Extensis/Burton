@@ -51,13 +51,21 @@ class RESX(Base):
         if dollarsign_this_replacement is None:
             dollarsign_this_replacement = filename
 
+        def filter_component(component):
+            component = component.lstrip(">")
+
+            if component == "$this":
+                component = dollarsign_this_replacement
+
+            return component
+
         for node in tree.findall(RESX.data_tag):
             if RESX.space_attribute in node.attrib \
                and node.attrib[RESX.space_attribute] == RESX.preserve_value:
                 components = node.attrib[RESX.name_attribute].split(".")
                 if len(components) == 1 \
                 or components[-1] in RESX.localizable_suffixes:
-                    key = unicode(components[0].lstrip(">"))
+                    key = unicode(".".join(map(filter_component, components)))
                     value = unicode(node.find(RESX.value_tag).text)
 
                     if key == "$this":
