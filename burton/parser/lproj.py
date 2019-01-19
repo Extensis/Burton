@@ -18,7 +18,8 @@ class LPROJ(Base):
         language,
         language_code,
         should_use_vcs,
-        vcs_class
+        vcs_class,
+        proj_file
     ):
         logger = logging.getLogger(burton.logger_name)
         logger.debug("Localizing " + input_filename + " into " + language)
@@ -27,9 +28,9 @@ class LPROJ(Base):
             output_directory,
             language_code + ".lproj"
         )
-        
+
         created_file = False
-        
+
         if not os.path.exists(output_directory):
             os.mkdir(output_directory)
             created_file = True
@@ -45,10 +46,11 @@ class LPROJ(Base):
                     language,
                     language_code,
                     should_use_vcs,
-                    vcs_class
+                    vcs_class,
+                    proj_file
                 )
-                
-                
+
+
             if filename.endswith(".strings"):
                 strings_parser = self._create_strings_parser()
                 input_mapping = \
@@ -78,9 +80,9 @@ class LPROJ(Base):
 
                 file = self._open_file(output_filename)
                 strings_parser.write_mapping(file, output_file_mapping)
-                
+
                 file.close()
-                
+
                 if should_use_vcs:
                     vcs_class.add_file(output_filename)
 
@@ -91,6 +93,6 @@ class LPROJ(Base):
 
     def _create_strings_parser(self):
         return Strings()
-    
+
     def _create_stringsdict_parser(self):
         return StringsDict()

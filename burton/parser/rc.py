@@ -130,7 +130,8 @@ class RC(Base):
         language,
         language_code,
         should_use_vcs,
-        vcs_class
+        vcs_class,
+        proj_file
     ):
         parts = os.path.basename(input_filename).split(".")
         if len(parts) > 2:
@@ -178,9 +179,9 @@ class RC(Base):
                 output_file.write(self._encode(line.rstrip()) + "\r\n")
 
             self._parse(input_filename, _print_line)
-            
+
             output_file.close()
-            
+
             if should_use_vcs:
                 vcs_class.add_file(output_filename)
 

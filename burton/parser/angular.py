@@ -57,7 +57,7 @@ class Angular(Base):
             assert type(line) is types.UnicodeType
 
             results = Angular.REGEX_PATTERN.search(line)
-            
+
             if results is not None:
                 func(results.group(1), results.group(2))
 
@@ -71,24 +71,25 @@ class Angular(Base):
         language,
         language_code,
         should_use_vcs,
-        vcs_class
+        vcs_class,
+        proj_file
     ):
         logger = logging.getLogger(burton.logger_name)
         logger.debug("Localizing " + input_filename + " into " + language)
-    
+
         output_filename = os.path.join(
             output_directory,
             input_filename.replace("english", language.lower()),
         )
-        
+
         created_file = False
 
         if not os.path.exists(output_filename):
             created_file = True
             logger.error("Created new file " + output_filename)
-        
+
         output_file = self._open_file_for_writing(output_filename)
-        
+
         input_file, encoding = self._open_file_for_reading(input_filename)
         contents = unicode(input_file.read())
         input_file.close()
@@ -100,7 +101,7 @@ class Angular(Base):
                 value = results.group(2).decode('unicode-escape')
                 if value in mapping:
                     value = mapping[value]
-                
+
                 if key is not None and value is not None:
                     line = re.sub(r"'\[[^\]]+\]'", "'[" + self._encode(key) + "]'", line)
                     line = re.sub(r": '[^\[].+[^\]]'", ": '" + self._encode(value) + "'", line)
@@ -109,11 +110,11 @@ class Angular(Base):
                     "$translateProvider.translations('en', strings);",
                     "$translateProvider.translations('" + language_code + "', strings);"
                 )
-            
+
             output_file.write(line + "\n")
-        
+
         output_file.close()
-        
+
         if should_use_vcs:
             vcs_class.add_file(output_filename)
 
@@ -126,7 +127,7 @@ class Angular(Base):
             encoding = "utf-8"
 
         return codecs.open(filename, "r", encoding), encoding
-    
+
     def _open_file_for_writing(self, filename):
         return open(filename, "w")
 

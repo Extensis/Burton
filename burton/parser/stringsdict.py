@@ -39,7 +39,7 @@ class StringsDict(Base):
             if node.tag == StringsDict.dict_tag:
                 for subnode in node.findall(StringsDict.dict_tag):
                     dict = subnode.find(StringsDict.dict_tag)
-                    if dict is not None: 
+                    if dict is not None:
                         valid_key = False
                         category = None
                         for entry in dict:
@@ -59,7 +59,8 @@ class StringsDict(Base):
         language,
         language_code,
         should_use_vcs,
-        vcs_class
+        vcs_class,
+        proj_file
     ):
         parts = os.path.basename(input_filename).split(".")
         if len(parts) > 2:
@@ -104,9 +105,9 @@ class StringsDict(Base):
                 pretty_print = True,
                 encoding = "utf-8"
             )
-            
+
             file.close()
-            
+
             if should_use_vcs:
                 vcs_class.add_file(output_filename)
 

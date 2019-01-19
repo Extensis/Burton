@@ -384,7 +384,8 @@ def create_localized_resources(conf, native_strings, vcs_class):
                             language,
                             conf.get(Config.language_codes)[language],
                             conf.get(Config.use_vcs),
-                            vcs_class
+                            vcs_class,
+                            conf.get(Config.proj_path)
                         )
 
     os.chdir(orig_path)
