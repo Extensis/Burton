@@ -81,7 +81,8 @@ class RESX(Base):
         language,
         language_code,
         should_use_vcs,
-        vcs_class
+        vcs_class,
+        proj_file
     ):
         parts = os.path.basename(input_filename).split(".")
         if len(parts) > 2:
@@ -113,6 +114,7 @@ class RESX(Base):
                 created_file = True
                 logger.error("Created new file " + output_filename)
 
+
             tree = lxml.etree.fromstring(self._read_file(input_filename))
 
             def _rewrite_mapping(key, value, node):
@@ -135,6 +137,76 @@ class RESX(Base):
             )
 
             file.close()
+
+            if(proj_file != None):
+                # add this file to given project
+                # open file
+                proj_file_h = self._open_file_for_appending(proj_file)
+                # load as xml
+                parser = lxml.etree.XMLParser(remove_blank_text=True)
+                proj_file_tree = lxml.etree.parse(proj_file_h, parser)
+                proj_file_h.close()
+
+                # computer our relative path of output_filename
+                proj_base_path = os.path.dirname(os.path.abspath(proj_file))
+                resx_relative_path = os.path.abspath(output_filename).replace(proj_base_path, '')
+                resx_relative_path = resx_relative_path.replace('/', '\\')
+
+                ns = '{http://schemas.microsoft.com/developer/msbuild/2003}'
+                # see if file already exists in project
+                # file name starts with a '/' at this point so skip that
+                xpath = './/' + ns + 'EmbeddedResource[@Include="' + resx_relative_path[1:] + '"]'
+#                print("finding matching embedded resources - xpath: " + xpath)
+                exists_in_proj = proj_file_tree.findall(xpath)
+
+                if(len(exists_in_proj) == 0):
+                    # add to project if needed
+                    # modify proj file
+                    # a section looks like:
+                    #   <EmbeddedResource Include="MainView\Wizard\UpdatesPage.it-IT.resx">
+                    #   <DependentUpon>UpdatesPage.cs</DependentUpon>
+                    #   </EmbeddedResource>
+
+                    # calculate our filenames for the include infile name and our dependent file name
+                    dependent_upon = os.path.basename(file.name).split('.')
+                    source_file_name = os.path.basename(input_filename);
+                    out_file_name = os.path.basename(file.name)
+
+                    resx_relative_base_path = "\\".join(resx_relative_path.split('\\')[1:-1])
+                    localized_element_path = resx_relative_base_path + '\\' + out_file_name
+                    dep_upon_element_path = resx_relative_base_path + '\\' + source_file_name
+
+                    # create our new element
+                    resource_elem = lxml.etree.Element('EmbeddedResource', include=localized_element_path)
+                    dep_upon_elem = lxml.etree.Element('DependentUpon')
+                    dep_upon_elem.text = dep_upon_element_path
+                    resource_elem.append(dep_upon_elem)
+
+                    # add after our dependent upon file
+                    # determine if our dependent upon file is a compile or an embedded resource
+                    element_type = 'Compile'
+                    if(source_file_name.endswith('.resx')):
+                        element_type = 'EmbeddedResource'
+
+                    # genereate our xpath
+                    xpath = ".//" + ns + element_type + '[@Include="' + dep_upon_element_path + '"]'
+
+                    # find any matching
+                    dep_upon_source = proj_file_tree.findall(xpath)
+                    # if we don't match anything something went wrong
+                    assert(len(dep_upon_source) > 0)
+
+                    dep_upon_source[0].addnext(resource_elem)
+
+                     # write changed file
+                    newContents = lxml.etree.tostring(proj_file_tree, xml_declaration=True, pretty_print=True)
+                    proj_file_h = self._open_file_for_writing(proj_file)
+                    proj_file_h.write(newContents)
+                    proj_file_h.close()
+
+                    # add to vcs if we need to
+                    if (should_use_vcs):
+                        vcs_class.add_file(proj_file)
 
             if should_use_vcs:
                 vcs_class.add_file(output_filename)
@@ -159,3 +231,6 @@ class RESX(Base):
 
     def _open_file_for_writing(self, filename):
         return open(filename, "w")
+
+    def _open_file_for_appending(self, filename):
+        return open(filename, 'ra')

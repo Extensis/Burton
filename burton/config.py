@@ -68,6 +68,7 @@ class Config(object):
     abort_if_no_translations = "abort_if_no_translations"
     xlf_repo_path            = "xlf_repo_path"
     base_localization_paths  = "base_localization_paths"
+    proj_path                = "proj_path"
 
     # Constants for command-line options
     root_path          = "root_path"
@@ -102,6 +103,7 @@ class Config(object):
         abort_if_no_translations : "false",
         xlf_repo_path            : None,
         base_localization_paths  : {},
+        proj_path                : "",
         language_codes           : {
             "English"    : "en-US",
             "French"     : "fr-FR",
@@ -247,7 +249,8 @@ class Config(object):
 
             if os.path.exists(full_path):
                 fp = self._open_for_reading(full_path)
-                parser = ConfigParser.SafeConfigParser()
+                print("b")
+                parser = ConfigParser.SafeConfigParser(self._config_file_defaults)
                 parser.readfp(fp)
                 self._platform_queue.extend(parser.sections())
 
