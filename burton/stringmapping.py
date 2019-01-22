@@ -1,7 +1,6 @@
 import logging
 
-import burton
-import parser
+from burton import parser
 
 class StringMapping(object):
     """The StringMapping class represents a mapping between localizable strings

@@ -68,7 +68,7 @@ class Config(object):
     abort_if_no_translations = "abort_if_no_translations"
     xlf_repo_path            = "xlf_repo_path"
     base_localization_paths  = "base_localization_paths"
-    proj_path                = "proj_path"
+    project_path                = "project_path"
 
     # Constants for command-line options
     root_path          = "root_path"
@@ -103,7 +103,7 @@ class Config(object):
         abort_if_no_translations : "false",
         xlf_repo_path            : None,
         base_localization_paths  : {},
-        proj_path                : "",
+        project_path                : "",
         language_codes           : {
             "English"    : "en-US",
             "French"     : "fr-FR",

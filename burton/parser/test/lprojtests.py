@@ -3,8 +3,8 @@ import mock
 import os
 import unittest
 
-import parser
-import stringmapping
+from burton import parser
+from burton import stringmapping
 import teststringio
 
 class LPROJTests(unittest.TestCase):
@@ -23,7 +23,7 @@ class LPROJTests(unittest.TestCase):
         lproj_parser._create_strings_parser = mock.Mock(
             return_value = fake_strings_parser
         )
-        
+
         lproj_parser._create_stringsdict_parser = mock.Mock(
             return_value = fake_stringsdict_parser
         )
@@ -53,7 +53,8 @@ class LPROJTests(unittest.TestCase):
             "Italian",
             "it",
             True,
-            vcs_class
+            vcs_class,
+            None
         )
 
         mkdir_func.assert_called_with(
@@ -82,7 +83,8 @@ InfoPlistVar = "Untranslated string";\n"""
             "Italian",
             "it",
             True,
-            vcs_class
+            vcs_class,
+            None
         )
 
         vcs_class.add_file.assert_called_with(

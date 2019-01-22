@@ -78,7 +78,8 @@ class Properties(Base):
         language,
         language_code,
         should_use_vcs,
-        vcs_class
+        vcs_class,
+        proj_file
     ):
         logger = logging.getLogger(burton.logger_name)
         logger.debug("Localizing " + input_filename + " into " + language)
@@ -111,9 +112,9 @@ class Properties(Base):
 
             file = self._open_file_for_writing(output_filename)
             self.write_mapping(file, output_file_mapping)
-            
+
             file.close()
-            
+
             if should_use_vcs:
                 vcs_class.add_file(output_filename)
 

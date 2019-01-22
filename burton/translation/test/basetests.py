@@ -1,6 +1,6 @@
 import unittest
 
-import translation
+from burton import translation
 
 class BaseTests(unittest.TestCase):
     def test_add_translation(self):

@@ -4,7 +4,7 @@ import os
 import types
 import unittest
 
-import parser
+from burton import parser
 import teststringio
 
 class StringsDictTests(unittest.TestCase):
@@ -181,7 +181,7 @@ class StringsDictTests(unittest.TestCase):
 
         translator._open_file_for_writing = mock.Mock(return_value = test_file)
         translator._read_file = mock.Mock(return_value = StringsDictTests.sample_strings)
-        
+
         self.assertEquals(
             translator.translate(
                 "test.stringsdict",
@@ -195,7 +195,8 @@ class StringsDictTests(unittest.TestCase):
                 "French",
                 "fr",
                 True,
-                vcs_class
+                vcs_class,
+                None
             ),
             os.path.join("Resources", "test.stringsdict")
         )
@@ -204,11 +205,11 @@ class StringsDictTests(unittest.TestCase):
             test_file.getvalue(),
             StringsDictTests.translated_strings
         )
-        
+
         mkdir_func.assert_called_with(
             "Resources"
         )
-        
+
         translator._open_file_for_writing.assert_called_with(
             os.path.join("Resources", "test.stringsdict")
         )
@@ -216,5 +217,5 @@ class StringsDictTests(unittest.TestCase):
         vcs_class.add_file.assert_called_with(
             os.path.join("Resources", "test.stringsdict")
         )
-        
+
         file.close()

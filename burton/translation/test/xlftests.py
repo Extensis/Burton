@@ -2,7 +2,7 @@ import cStringIO
 import random
 import unittest
 
-import translation
+from burton import translation
 
 class XLFTests(unittest.TestCase):
     test_xlf = """<?xml version='1.0' encoding='UTF-8'?>

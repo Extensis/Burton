@@ -138,7 +138,10 @@ class RESX(Base):
 
             file.close()
 
-            if(proj_file != None):
+            if(proj_file.lower() != "none"):
+                # namespace for xpath queries
+                ns = '{http://schemas.microsoft.com/developer/msbuild/2003}'
+
                 # add this file to given project
                 # open file
                 proj_file_h = self._open_file_for_appending(proj_file)
@@ -147,15 +150,15 @@ class RESX(Base):
                 proj_file_tree = lxml.etree.parse(proj_file_h, parser)
                 proj_file_h.close()
 
-                # computer our relative path of output_filename
-                proj_base_path = os.path.dirname(os.path.abspath(proj_file))
-                resx_relative_path = os.path.abspath(output_filename).replace(proj_base_path, '')
+                # compute our relative path of output_filename
+                proj_base_path = os.path.dirname(os.path.abspath(proj_file)).replace('/', '\\')
+                resx_relative_path = os.path.abspath(output_filename)
                 resx_relative_path = resx_relative_path.replace('/', '\\')
+                resx_relative_path = resx_relative_path.replace(proj_base_path, '')[1:]
 
-                ns = '{http://schemas.microsoft.com/developer/msbuild/2003}'
                 # see if file already exists in project
                 # file name starts with a '/' at this point so skip that
-                xpath = './/' + ns + 'EmbeddedResource[@Include="' + resx_relative_path[1:] + '"]'
+                xpath = './/' + ns + 'EmbeddedResource[@Include="' + resx_relative_path + '"]'
                 exists_in_proj = proj_file_tree.findall(xpath)
 
                 if(len(exists_in_proj) == 0):
@@ -169,11 +172,13 @@ class RESX(Base):
                     # calculate our filenames for the include infile name and our dependent file name
                     dependent_upon = os.path.basename(file.name).split('.')
                     source_file_name = os.path.basename(input_filename);
-                    out_file_name = os.path.basename(file.name)
+                    out_file_name = os.path.basename(output_filename)
 
-                    resx_relative_base_path = "\\".join(resx_relative_path.split('\\')[1:-1])
+                    resx_relative_base_path = "\\".join(resx_relative_path.split('\\')[0:-1])
                     localized_element_path = resx_relative_base_path + '\\' + out_file_name
+                    localized_element_path = localized_element_path.lstrip('/').lstrip('\\')
                     dep_upon_element_path = resx_relative_base_path + '\\' + source_file_name
+                    dep_upon_element_path = dep_upon_element_path.lstrip('/').lstrip('\\')
 
                     # create our new element
                     resource_elem = lxml.etree.Element('EmbeddedResource', include=localized_element_path)
@@ -193,19 +198,20 @@ class RESX(Base):
                     # find any matching
                     dep_upon_source = proj_file_tree.findall(xpath)
                     # if we don't match anything something went wrong
-                    assert(len(dep_upon_source) > 0)
+                    if (len(dep_upon_source) < 1):
+                        print "Could not find " + input_filename + " in project file. Not adding " + output_filename + " to project"
+                    else:
+                        dep_upon_source[0].addnext(resource_elem)
 
-                    dep_upon_source[0].addnext(resource_elem)
+                        # write changed file
+                        newContents = lxml.etree.tostring(proj_file_tree, xml_declaration=True, pretty_print=True)
+                        proj_file_h = self._open_file_for_writing(proj_file)
+                        proj_file_h.write(newContents)
+                        proj_file_h.close()
 
-                     # write changed file
-                    newContents = lxml.etree.tostring(proj_file_tree, xml_declaration=True, pretty_print=True)
-                    proj_file_h = self._open_file_for_writing(proj_file)
-                    proj_file_h.write(newContents)
-                    proj_file_h.close()
-
-                    # add to vcs if we need to
-                    if (should_use_vcs):
-                        vcs_class.add_file(proj_file)
+                        # add to vcs if we need to
+                        if (should_use_vcs):
+                            vcs_class.add_file(proj_file)
 
             if should_use_vcs:
                 vcs_class.add_file(output_filename)

@@ -4,7 +4,7 @@ import os
 import types
 import unittest
 
-import parser
+from burton import parser
 
 class StringsTests(unittest.TestCase):
     sample_strings = \

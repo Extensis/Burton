@@ -5,7 +5,7 @@ import os
 import sqlite3
 import unittest
 
-import database
+from burton import database
 
 class SQLiteTests(unittest.TestCase):
     def tearDown(self):

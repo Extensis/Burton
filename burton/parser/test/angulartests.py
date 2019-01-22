@@ -4,7 +4,7 @@ import os
 import types
 import unittest
 
-import parser
+from burton import parser
 import teststringio
 
 class AngularTests(unittest.TestCase):
@@ -99,21 +99,21 @@ module Extensis.Suitcase.i18n {
         for key, value in string_mapping.string_mapping_dict.iteritems():
             self.assertEquals(type(key), types.UnicodeType)
             self.assertEquals(type(value), types.UnicodeType)
-    
+
     def test_translate(self):
         vcs_class = mock.Mock()
         translator = parser.Angular()
         output_file = teststringio.TestStringIO()
-        
+
         translator._open_file_for_reading = mock.Mock(return_value = (
-            teststringio.TestStringIO(AngularTests.sample_strings),
+            teststringio.TestStringIO(None, AngularTests.sample_strings),
             "utf_8"
         ))
-        
+
         translator._open_file_for_writing = mock.Mock(return_value = output_file)
-        
+
         mapping = { u"Translation for the other string" : u"Can't \"quote\" \xe9\u4e00\xe9!" }
-        
+
         translator.translate(
             'english.i18n.ts',
             '.',
@@ -121,9 +121,10 @@ module Extensis.Suitcase.i18n {
             'Spanish',
             'es',
             True,
-            vcs_class
+            vcs_class,
+            None
         )
-        
+
         self.assertEquals(
             output_file.getvalue(),
             AngularTests.translated_strings

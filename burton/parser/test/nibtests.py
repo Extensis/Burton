@@ -4,7 +4,7 @@ import sys
 import types
 import unittest
 
-import parser
+from burton import parser
 
 class NIBTests(unittest.TestCase):
     sample_nib = \
