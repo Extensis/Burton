@@ -503,7 +503,8 @@ class BurtonTests(unittest.TestCase):
             "English",
             "en-us",
             False,
-            vcs_class
+            vcs_class,
+            None
         )
 
         config_dict[burton.Config.localization_output_dir] = "foo"
@@ -526,7 +527,8 @@ class BurtonTests(unittest.TestCase):
             "English",
             "en-us",
             False,
-            vcs_class
+            vcs_class,
+            None
         )
 
     def test_get_localized_resource_instance(self):

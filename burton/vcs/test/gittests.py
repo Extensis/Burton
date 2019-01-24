@@ -2,7 +2,7 @@ import mock
 import os
 import unittest
 
-import vcs
+from burton import vcs
 
 class TestStdout():
     def read(self):
@@ -25,11 +25,11 @@ class GitTests(unittest.TestCase):
             [ 'add', filename ],
             None
         )
-        
+
         xlf_repo_path = 'xlf_repo_path';
-        
+
         git.add_file(filename, xlf_repo_path)
-        
+
         git._run_command.assert_called_with(
             [ 'add', filename ],
             xlf_repo_path
@@ -53,7 +53,7 @@ class GitTests(unittest.TestCase):
                 [ "status", "-uno", "--porcelain" ]
             )
         ])
-        
+
         git._run_command.assert_has_calls([
             mock.call(
                 [ "commit", "-m", commit_message ],
@@ -83,7 +83,7 @@ class GitTests(unittest.TestCase):
             [ "reset", "HEAD", filename ],
             None
         )
-        
+
         git._run_command.assert_called_with(
             [ "checkout", filename ],
             None
@@ -95,12 +95,12 @@ class GitTests(unittest.TestCase):
             [ "reset", "HEAD", filename ],
             xlf_repo_path
         )
-        
+
         git._run_command.assert_called_with(
             [ "checkout", filename ],
             xlf_repo_path
         )
-    
+
     def test_revert_all(self):
         git = vcs.Git()
         git._run_command = mock.Mock()
@@ -112,7 +112,7 @@ class GitTests(unittest.TestCase):
             [ "reset", "--hard" ],
             xlf_repo_path
         )
-        
+
         git._run_command.assert_called_with(
             [ "reset", "--hard" ]
         )

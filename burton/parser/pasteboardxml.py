@@ -57,7 +57,8 @@ class PasteboardXML(Base):
         language,
         language_code,
         should_use_vcs,
-        vcs_class
+        vcs_class,
+        proj_file
     ):
         logger = logging.getLogger(burton.logger_name)
         logger.debug("Localizing " + input_filename + " into " + language)
@@ -93,9 +94,9 @@ class PasteboardXML(Base):
                 pretty_print = True,
                 encoding = "utf-8"
             )
-            
+
             file.close()
-            
+
             if should_use_vcs:
                 vcs_class.add_file(output_filename)
 

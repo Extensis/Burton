@@ -4,7 +4,7 @@ import os
 import types
 import unittest
 
-import parser
+from burton import parser
 import teststringio
 
 class RCTests(unittest.TestCase):
@@ -111,7 +111,7 @@ END\r\n\r
     def test_extract_strings_from_filename(self):
         extractor = parser.RC()
         extractor._open_file = mock.Mock(return_value = (
-            teststringio.TestStringIO(RCTests.sample_rc),
+            teststringio.TestStringIO(None, RCTests.sample_rc),
             "iso-8859-1",
         ))
 
@@ -133,7 +133,7 @@ END\r\n\r
     def test_extract_mapping_from_filename(self):
         extractor = parser.RC()
         extractor._open_file = mock.Mock(return_value = (
-            teststringio.TestStringIO(RCTests.sample_rc),
+            teststringio.TestStringIO(None, RCTests.sample_rc),
             "utf_8",
         ))
 
@@ -187,7 +187,7 @@ END\r\n\r
         test_input_file = None
 
         def _get_input_file(self):
-            test_input_file = teststringio.TestStringIO(RCTests.sample_rc)
+            test_input_file = teststringio.TestStringIO(None, RCTests.sample_rc)
             return test_input_file, "utf-8"
 
         rc_parser._open_file_for_writing = mock.Mock(
@@ -208,7 +208,8 @@ END\r\n\r
             "Italian",
             "it-IT",
             True,
-            vcs_class
+            vcs_class,
+            None
         )
 
         mkdir_func.assert_called_with(

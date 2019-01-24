@@ -1,11 +1,11 @@
 import codecs
 import mock
 import os
-import stringmapping
+from burton import stringmapping
 import types
 import unittest
 
-import parser
+from burton import parser
 import teststringio
 
 class PropertiesTests(unittest.TestCase):
@@ -37,7 +37,7 @@ CouldNotOpenFont Could not open font "{0}".
     def test_extract_strings_from_filename(self):
         extractor = parser.Properties()
         extractor._open_file_for_reading = mock.Mock(return_value = (
-            teststringio.TestStringIO(PropertiesTests.sample_file)
+            teststringio.TestStringIO(None, PropertiesTests.sample_file)
         ))
 
         self.assertEquals(
@@ -53,7 +53,7 @@ CouldNotOpenFont Could not open font "{0}".
     def test_extract_mapping_from_filename(self):
         extractor = parser.Properties()
         extractor._open_file_for_reading = mock.Mock(return_value =
-            teststringio.TestStringIO(PropertiesTests.sample_file),
+            teststringio.TestStringIO(None, PropertiesTests.sample_file),
         )
 
         string_mapping = extractor.extract_mapping_from_filename("some_file")
@@ -127,7 +127,8 @@ CouldNotOpenFont Could not open font "{0}".
             "Italian",
             "it_IT",
             True,
-            vcs_class
+            vcs_class,
+            None
         )
 
         mkdir_func.assert_called_with(

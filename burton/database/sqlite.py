@@ -5,6 +5,7 @@ import sqlite3
 from pkg_resources import resource_stream
 
 import burton
+from burton import parser
 
 class SQLite(object):
     """The SQLite class facilitates saving localization data to a SQLite
@@ -283,7 +284,7 @@ class SQLite(object):
         translation
     ):
         filtered_translation, replaced_params = \
-            burton.parser.replace_params(translation)
+            parser.replace_params(translation)
 
         cursor = self.dbh.cursor()
         translation_key_no = cursor.execute(
@@ -335,7 +336,7 @@ class SQLite(object):
         translation
     ):
         filtered_translation, replaced_params = \
-            burton.parser.replace_params(translation)
+            parser.replace_params(translation)
 
         native_translation_no = self._get_native_translation_no(
             translation_key_no,

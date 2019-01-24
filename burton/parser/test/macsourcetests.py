@@ -4,7 +4,7 @@ import sys
 import types
 import unittest
 
-import parser
+from burton import parser
 
 class NIBTests(unittest.TestCase):
     @unittest.skipUnless(sys.platform == "darwin", "Requires Mac")
@@ -28,4 +28,3 @@ class NIBTests(unittest.TestCase):
 
         for string in extracted_strings:
             self.assertEquals(type(string), types.UnicodeType)
-

@@ -3,7 +3,7 @@ import os
 
 from pkg_resources import resource_stream
 
-import burton
+from burton import parser
 from base import Base
 
 class XLF(Base):
@@ -80,7 +80,7 @@ class XLF(Base):
                 filtered_source = None
                 if key is not None:
                     filtered_source, replaced_params = \
-                        burton.parser.replace_params(key)
+                        parser.replace_params(key)
 
                 source.text = filtered_source
 

@@ -12,7 +12,7 @@ class BaseTests(unittest.TestCase):
             [ u"SomeString",      u"IgnoredString",      ],
         ]
 
-        extractor = parser.Base()
+        extractor = burton.parser.Base()
         extractor.extract_strings_from_filename = mock.Mock(side_effect =
             lambda(filename): individual_file_strings.pop()
         )
@@ -25,9 +25,9 @@ class BaseTests(unittest.TestCase):
             set([ u"SomeString", u"SomeOtherString", u"StillAnotherString" ])
         )
 
-    @mock.patch.object(parser.base, "filter_string")
+    @mock.patch.object(burton.parser.base, "filter_string")
     def test_extract_strings_from_files_filters_strings(self, mock_filter_func):
-        extractor = parser.Base()
+        extractor = burton.parser.Base()
         extractor.extract_strings_from_filename = mock.Mock(return_value =
             [ u"SomeString", u"SomeOtherString", u"StillAnotherString" ],
         )
@@ -54,7 +54,7 @@ class BaseTests(unittest.TestCase):
         )
 
         individual_file_mappings = [ mapping1, mapping2 ]
-        extractor = parser.Base()
+        extractor = burton.parser.Base()
         extractor.extract_mapping_from_filename = mock.Mock(side_effect =
             lambda(filename): individual_file_mappings.pop()
         )

@@ -3,7 +3,7 @@ import os
 import types
 import unittest
 
-import parser
+from burton import parser
 import teststringio
 
 class PasteboardXMLTests(unittest.TestCase):
@@ -128,7 +128,8 @@ class PasteboardXMLTests(unittest.TestCase):
                 "Japanese",
                 "jp",
                 True,
-                vcs_class
+                vcs_class,
+                "None"
             ),
             os.path.join("Resources", "pasteboard-test-jp.xml")
         )
