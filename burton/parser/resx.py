@@ -181,7 +181,7 @@ class RESX(Base):
                     dep_upon_element_path = dep_upon_element_path.lstrip('/').lstrip('\\')
 
                     # create our new element
-                    resource_elem = lxml.etree.Element('EmbeddedResource', include=localized_element_path)
+                    resource_elem = lxml.etree.Element('EmbeddedResource', Include=localized_element_path)
                     dep_upon_elem = lxml.etree.Element('DependentUpon')
                     dep_upon_elem.text = dep_upon_element_path
                     resource_elem.append(dep_upon_elem)

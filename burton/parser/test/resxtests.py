@@ -159,7 +159,7 @@ class RESXTests(unittest.TestCase):
     <EmbeddedResource Include="Sample.resx">
       <DependentUpon>FocusablePanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource include="Sample.it-IT.resx">
+    <EmbeddedResource Include="Sample.it-IT.resx">
       <DependentUpon>Sample.resx</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
