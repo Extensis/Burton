@@ -177,14 +177,8 @@ class RESX(Base):
                     resx_relative_base_path = "\\".join(resx_relative_path.split('\\')[0:-1])
                     localized_element_path = resx_relative_base_path + '\\' + out_file_name
                     localized_element_path = localized_element_path.lstrip('/').lstrip('\\')
-                    dep_upon_element_path = resx_relative_base_path + '\\' + source_file_name
+                    dep_upon_element_path =  source_file_name
                     dep_upon_element_path = dep_upon_element_path.lstrip('/').lstrip('\\')
-
-                    # create our new element
-                    resource_elem = lxml.etree.Element('EmbeddedResource', Include=localized_element_path)
-                    dep_upon_elem = lxml.etree.Element('DependentUpon')
-                    dep_upon_elem.text = dep_upon_element_path
-                    resource_elem.append(dep_upon_elem)
 
                     # add after our dependent upon file
                     # determine if our dependent upon file is a compile or an embedded resource
@@ -192,8 +186,8 @@ class RESX(Base):
                     if(source_file_name.endswith('.resx')):
                         element_type = 'EmbeddedResource'
 
-                    # genereate our xpath
-                    xpath = ".//" + ns + element_type + '[@Include="' + dep_upon_element_path + '"]'
+                    # generate our xpath
+                    xpath = ".//" + ns + element_type + '[@Include="' + resx_relative_base_path + '\\' + dep_upon_element_path + '"]'
 
                     # find any matching
                     dep_upon_source = proj_file_tree.findall(xpath)
@@ -201,6 +195,12 @@ class RESX(Base):
                     if (len(dep_upon_source) < 1):
                         print "Could not find " + input_filename + " in project file. Not adding " + output_filename + " to project"
                     else:
+                        # create our new element
+                        resource_elem = lxml.etree.Element('EmbeddedResource', Include=localized_element_path)
+                        dep_upon_elem = lxml.etree.Element('DependentUpon')
+                        dep_upon_elem.text = dep_upon_source[0][0].text
+                        resource_elem.append(dep_upon_elem)
+
                         dep_upon_source[0].addnext(resource_elem)
 
                         # write changed file
