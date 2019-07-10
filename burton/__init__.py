@@ -6,14 +6,14 @@ import re
 import subprocess
 import sys
 
-import database
-import parser
-import translation
-import vcs
+from . import database
+from . import parser
+from . import translation
+from . import vcs
 
-from config import Config
-from logginghandler import BurtonLoggingHandler
-from stringmapping import StringMapping
+from .config import Config
+from .logginghandler import BurtonLoggingHandler
+from .stringmapping import StringMapping
 
 logger_name = "extensis.burton"
 logging_handler = BurtonLoggingHandler()
@@ -126,7 +126,7 @@ def _extract_strings(parser_name, files, strings_to_ignore):
 
 def _get_extensions_by_parser(conf):
     extensions_by_parser = { }
-    for key, value in conf.get(Config.parsers_by_extension).iteritems():
+    for key, value in conf.get(Config.parsers_by_extension).items():
         extensions_by_parser[value] = extensions_by_parser.get(value, [])
         extensions_by_parser[value].append(key)
 

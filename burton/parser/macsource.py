@@ -3,8 +3,8 @@ import shutil
 import subprocess
 import tempfile
 
-from base import Base
-from strings import Strings
+from .base import Base
+from .strings import Strings
 
 class MacSource(Base):
     def __init__(self):

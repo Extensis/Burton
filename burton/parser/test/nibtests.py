@@ -8,7 +8,7 @@ from burton import parser
 
 class NIBTests(unittest.TestCase):
     sample_nib = \
-    """<?xml version="1.0" encoding="UTF-8"?>
+    str.encode("""<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
@@ -27,7 +27,7 @@ class NIBTests(unittest.TestCase):
 	</dict>
 </dict>
 </plist>
-"""
+""")
 
     @unittest.skipUnless(sys.platform == "darwin", "Requires Mac")
     def test_get_plist_from_nib_file(self):
@@ -55,7 +55,7 @@ class NIBTests(unittest.TestCase):
         )
 
         for string in extracted_strings:
-            self.assertEquals(type(string), types.UnicodeType)
+            self.assertEquals(type(string), str)
 
     def test_extract_mapping_from_filename(self):
         extractor = parser.NIB()
@@ -90,23 +90,23 @@ class NIBTests(unittest.TestCase):
             os.path.join("other.nib", "random.nib"),
         ])
 
-        self.assertEquals(params, [ "some.nib", "other.nib" ])
+        self.assertEquals(set(params), set([ "some.nib", "other.nib" ]))
 
     def test_filter_filenames(self):
         extractor = parser.NIB()
 
         self.assertEquals(
-            extractor._filter_filenames([
+            set(extractor._filter_filenames([
                 os.path.join("some.nib", "designable.nib"),
                 os.path.join("some.nib", "keyedobjects.nib"),
                 os.path.join("other.nib", "random.nib"),
                 os.path.join("other.nib", "random.other"),
-            ]),
-            [
+            ])),
+            set([
                 os.path.join("other.nib", "random.other"),
-                "some.nib",
                 "other.nib",
-            ]
+                "some.nib",
+            ])
         )
 
         extractor._filter_filenames = mock.Mock(return_value = [])

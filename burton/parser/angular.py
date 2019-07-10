@@ -7,8 +7,8 @@ import types
 import unicodedata
 
 import burton
-from base import Base
-from util import detect_encoding
+from .base import Base
+from .util import detect_encoding
 
 class Angular(Base):
     REGEX_PATTERN = re.compile("'\[([^\]]+)\]'\s*:\s*'(.+)'")
@@ -47,14 +47,14 @@ class Angular(Base):
 
     def _parse(self, filename, func):
         file, encoding = self._open_file_for_reading(filename)
-        contents = unicode(file.read())
+        contents = file.read()
 
         for line in re.split("\r|\n", contents):
             key   = None
             value = None
             line  = line.rstrip("\r\n")
 
-            assert type(line) is types.UnicodeType
+            assert type(line) is str
 
             results = Angular.REGEX_PATTERN.search(line)
 
@@ -86,25 +86,25 @@ class Angular(Base):
 
         if not os.path.exists(output_filename):
             created_file = True
-            logger.error("Created new file " + output_filename)
 
         output_file = self._open_file_for_writing(output_filename)
 
         input_file, encoding = self._open_file_for_reading(input_filename)
-        contents = unicode(input_file.read())
+        contents = input_file.read()
         input_file.close()
 
         for line in re.split("\r|\n", contents):
             results = Angular.REGEX_PATTERN.search(line)
             if results is not None:
-                key = results.group(1).decode('unicode-escape')
-                value = results.group(2).decode('unicode-escape')
+                key = results.group(1)
+                value = results.group(2)
                 if value in mapping:
                     value = mapping[value]
 
                 if key is not None and value is not None:
                     line = re.sub(r"'\[[^\]]+\]'", "'[" + self._encode(key) + "]'", line)
-                    line = re.sub(r": '[^\[].+[^\]]'", ": '" + self._encode(value) + "'", line)
+                    sub_value = (": '" + self._encode(value) + "'").replace("\\x", "\\\\x").replace("\\u", "\\\\u")
+                    line = re.sub(r": '[^\[].+[^\]]'", sub_value, line)
             else:
                 line = line.replace(
                     "$translateProvider.translations('en', strings);",
@@ -119,7 +119,7 @@ class Angular(Base):
             vcs_class.add_file(output_filename)
 
     def _open_file_for_reading(self, filename):
-        encoding = detect_encoding(open(filename, "r"))
+        encoding = detect_encoding(open(filename, "rb"))
 
         # Strings files should always be unicode of some sort.
         # Sometimes chardet guesses UTF-8 wrong.
@@ -132,4 +132,5 @@ class Angular(Base):
         return open(filename, "w")
 
     def _encode(self, str):
-        return str.encode("unicode-escape").replace("'", "\\'")
+        str = str.encode('unicode-escape').decode('utf8').replace("'", "\\'")
+        return str

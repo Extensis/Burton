@@ -62,18 +62,19 @@ class SQLite(object):
         self.dbh = sqlite3.connect(self._temp_filename)
 
     def _schema_file(self):
-        return resource_stream(
-            __name__,
-            "sqlite.schema"
-        )
+        return resource_stream(__name__, "sqlite.schema")
+        
     def _load_schema(self):
         cursor = self.dbh.cursor()
         fp = self._schema_file()
+        contents = fp.read()
+        if isinstance(contents, bytes):
+            contents = contents.decode()
         cursor.executescript(
-            fp.read()
+          contents
         )
         fp.close()
-        cursor.close()
+
         self.dbh.commit()
 
     def _load_database(self):
@@ -135,9 +136,7 @@ class SQLite(object):
             """,
         )
 
-        results = map(
-            lambda(key) : key[0].decode("unicode_escape"), cursor.fetchall()
-        )
+        results = [key[0].decode("unicode_escape") for key in cursor.fetchall()]
         return results
 
     def get_all_native_translations(self):
@@ -149,9 +148,7 @@ class SQLite(object):
             """,
         )
 
-        results = map(
-            lambda(key) : key[0].decode("unicode_escape"), cursor.fetchall()
-        )
+        results = [key[0].decode("unicode_escape") for key in cursor.fetchall()]
         return results
 
     def _insert_new_translation_keys(self, platform_no, mapping):
@@ -476,7 +473,7 @@ class SQLite(object):
         cursor = self.dbh.cursor()
         cursor.execute("select name from platforms")
 
-        return_value = map(lambda(result) : result[0], cursor.fetchall())
+        return_value = [result[0] for result in cursor.fetchall()]
         cursor.close()
 
         return return_value
@@ -501,7 +498,7 @@ class SQLite(object):
         cursor.close()
 
         return_value = { }
-        print results
+        print(results)
         for translation_key in results:
             return_value[translation_key.decode("unicode_escape")] = \
                 results[translation_key].decode("unicode_escape")
@@ -521,9 +518,7 @@ class SQLite(object):
             ( platform_no, )
         )
 
-        results = map(
-            lambda(key) : key[0].decode("unicode_escape"), cursor.fetchall()
-        )
+        results = [key[0].decode("unicode_escape") for key in cursor.fetchall()]
 
         cursor.close()
 

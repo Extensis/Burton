@@ -1,8 +1,9 @@
-import cStringIO
 import mock
 import os
 import types
 import unittest
+
+from io import StringIO
 
 from burton import parser
 
@@ -34,7 +35,7 @@ InfoPlistVariable = /* Middle comment */ "Info Plist Variable";
     def test_extract_strings_from_filename(self):
         extractor = parser.Strings()
         extractor._open_file = mock.Mock(return_value = (
-            cStringIO.StringIO(StringsTests.sample_strings),
+            StringIO(StringsTests.sample_strings),
             "utf_8"
         ))
 
@@ -56,7 +57,7 @@ InfoPlistVariable = /* Middle comment */ "Info Plist Variable";
     def test_extract_mapping_from_filename(self):
         extractor = parser.Strings()
         extractor._open_file = mock.Mock(return_value = (
-            cStringIO.StringIO(StringsTests.sample_strings),
+            StringIO(StringsTests.sample_strings),
             "utf_8"
         ))
 
@@ -77,12 +78,12 @@ InfoPlistVariable = /* Middle comment */ "Info Plist Variable";
             }
         )
 
-        for key, value in string_mapping.string_mapping_dict.iteritems():
-            self.assertEquals(type(key), types.UnicodeType)
-            self.assertEquals(type(value), types.UnicodeType)
+        for key, value in string_mapping.string_mapping_dict.items():
+            self.assertEquals(type(key), str)
+            self.assertEquals(type(value), str)
 
     def test_write_mapping(self):
-        file = cStringIO.StringIO()
+        file = StringIO()
         parser.Strings().write_mapping(file, {
             u'"SomeString"' : u'Translation for some string',
             u'"SomeOtherString"' : u'Can\'t "quote" this!'
@@ -98,7 +99,7 @@ InfoPlistVariable = /* Middle comment */ "Info Plist Variable";
         file.close()
 
     def test_write_mapping_does_not_over_escape_newline(self):
-        file = cStringIO.StringIO()
+        file = StringIO()
         parser.Strings().write_mapping(file, {
             u'"SomeString"' : u'String with a \r\n newline',
         })

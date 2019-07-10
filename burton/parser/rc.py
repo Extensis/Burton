@@ -5,8 +5,8 @@ import re
 import types
 
 import burton
-from base import Base
-from util import detect_encoding
+from .base import Base
+from .util import detect_encoding
 
 class RC(Base):
     string_table_token = "STRINGTABLE"
@@ -68,7 +68,7 @@ class RC(Base):
 
         # We can't use codecs or readlines() due to a bug in Python's handling
         # of UTF-16 files on Windows
-        lines = file.read().decode(encoding).replace("\r\n", "\n").split("\n")
+        lines = file.read().replace("\r\n", "\n").split("\n")
         for line in lines:
             orig_line = line
             line = line.lstrip()
@@ -77,7 +77,7 @@ class RC(Base):
             line  = line.rstrip("\r\n")
 
             if not (line.startswith("#") or line.startswith("//")):
-                assert(type(line) == types.UnicodeType)
+                assert(type(line) == str)
 
                 if incomplete_line is not None:
                     line = incomplete_line + line
@@ -162,7 +162,6 @@ class RC(Base):
 
             if not os.path.exists(output_filename):
                 created_file = True
-                logger.error("Created new file " + output_filename)
 
             output_file = self._open_file_for_writing(output_filename)
 
@@ -221,7 +220,7 @@ class RC(Base):
         return str
 
     def _open_file(self, filename):
-        encoding = detect_encoding(open(filename, "r"))
+        encoding = detect_encoding(open(filename, "rb"))
         return open(filename, "r"), encoding
 
     def _open_file_for_writing(self, filename):

@@ -4,8 +4,8 @@ import re
 import subprocess
 import sys
 
-from noop import NoOp
-from vcsexception import VCSException
+from .noop import NoOp
+from .vcsexception import VCSException
 
 class Git(NoOp):
     def __init__(self):

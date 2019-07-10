@@ -27,4 +27,4 @@ class NIBTests(unittest.TestCase):
         )
 
         for string in extracted_strings:
-            self.assertEquals(type(string), types.UnicodeType)
+            self.assertEquals(type(string), str)

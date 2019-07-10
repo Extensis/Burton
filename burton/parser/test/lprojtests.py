@@ -5,7 +5,7 @@ import unittest
 
 from burton import parser
 from burton import stringmapping
-import teststringio
+from . import teststringio
 
 class LPROJTests(unittest.TestCase):
 

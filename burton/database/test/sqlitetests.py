@@ -1,9 +1,10 @@
 import codecs
-import cStringIO
 import mock
 import os
 import sqlite3
 import unittest
+
+from io import StringIO
 
 from burton import database
 
@@ -40,16 +41,16 @@ class SQLiteTests(unittest.TestCase):
         self.assertEquals(
             cursor.execute("select * from translation_keys").fetchall(),
             [
-                (1, u"SomeString", u"2010-12-02 02:20:00"),
-                (2, u"OtherString", u"2010-12-02 02:20:00")
+                (1, b"SomeString", "2010-12-02 02:20:00"),
+                (2, b"OtherString", "2010-12-02 02:20:00")
             ],
         )
 
         self.assertEquals(
             cursor.execute("select * from native_translations").fetchall(),
             [
-                (1, 1, 1, u"Translation for some string"),
-                (2, 2, 1, u"Translation for some other string")
+                (1, 1, 1, b"Translation for some string"),
+                (2, 2, 1, b"Translation for some other string")
             ],
         )
 
@@ -68,18 +69,18 @@ class SQLiteTests(unittest.TestCase):
         self.assertEquals(
             cursor.execute("select * from translation_keys").fetchall(),
             [
-                (1, u"SomeString", u"2010-12-02 02:21:00"),
-                (2, u"OtherString", u"2010-12-02 02:21:00")
+                (1, b"SomeString", "2010-12-02 02:21:00"),
+                (2, b"OtherString", "2010-12-02 02:21:00")
             ],
         )
 
         self.assertEquals(
             cursor.execute("select * from native_translations").fetchall(),
             [
-                (1, 1, 1, u"Translation for some string"),
-                (2, 2, 1, u"Translation for some other string"),
-                (3, 1, 2, u"Translation for some string"),
-                (4, 2, 2, u"Translation for some other string")
+                (1, 1, 1, b"Translation for some string"),
+                (2, 2, 1, b"Translation for some other string"),
+                (3, 1, 2, b"Translation for some string"),
+                (4, 2, 2, b"Translation for some other string")
             ],
         )
 
@@ -97,18 +98,18 @@ class SQLiteTests(unittest.TestCase):
         self.assertEquals(
             cursor.execute("select * from translation_keys").fetchall(),
             [
-                (1, u"SomeString", u"2010-12-02 02:22:00"),
-                (2, u"OtherString", u"2010-12-02 02:21:00")
+                (1, b"SomeString", "2010-12-02 02:22:00"),
+                (2, b"OtherString", "2010-12-02 02:21:00")
             ],
         )
 
         self.assertEquals(
             cursor.execute("select * from native_translations").fetchall(),
             [
-                (1, 1, 1, u"New translation for some string"),
-                (2, 2, 1, u"Translation for some other string"),
-                (3, 1, 2, u"Translation for some string"),
-                (4, 2, 2, u"Translation for some other string")
+                (1, 1, 1, b"New translation for some string"),
+                (2, 2, 1, b"Translation for some other string"),
+                (3, 1, 2, b"Translation for some string"),
+                (4, 2, 2, b"Translation for some other string")
             ],
         )
 
@@ -125,17 +126,17 @@ class SQLiteTests(unittest.TestCase):
         self.assertEquals(
             cursor.execute("select * from translation_keys").fetchall(),
             [
-                (1, u"SomeString", u"2010-12-02 02:23:00"),
-                (2, u"OtherString", u"2010-12-02 02:23:00")
+                (1, b"SomeString", "2010-12-02 02:23:00"),
+                (2, b"OtherString", "2010-12-02 02:23:00")
             ],
         )
 
         self.assertEquals(
             cursor.execute("select * from native_translations").fetchall(),
             [
-                (1, 1, 1, u"New translation for some string"),
-                (2, 2, 1, u"Translation for some other string"),
-                (3, 1, 2, u"New translation for some string")
+                (1, 1, 1, b"New translation for some string"),
+                (2, 2, 1, b"Translation for some other string"),
+                (3, 1, 2, b"New translation for some string")
             ],
         )
 
@@ -168,24 +169,24 @@ class SQLiteTests(unittest.TestCase):
         self.assertEquals(
             cursor.execute("select * from translation_keys").fetchall(),
             [
-                (1, u"SomeString", u"2010-12-02 02:20:00"),
+                (1, b"SomeString", "2010-12-02 02:20:00"),
             ],
         )
 
         self.assertEquals(
             cursor.execute("select * from native_translations").fetchall(),
             [
-                (1, 1, 1, "%03d of %03.3lld for {0} %@"),
+                (1, 1, 1, b"%03d of %03.3lld for {0} %@"),
             ],
         )
 
         self.assertEquals(
             cursor.execute("select * from replaced_params").fetchall(),
             [
-                (1, 1, 1, 0, u"%03d" ),
-                (2, 1, 1, 1, u"%03.3lld"),
-                (3, 1, 1, 2, u"{0}"     ),
-                (4, 1, 1, 3, u"%@"      ),
+                (1, 1, 1, 0, b"%03d" ),
+                (2, 1, 1, 1, b"%03.3lld"),
+                (3, 1, 1, 2, b"{0}"     ),
+                (4, 1, 1, 3, b"%@"      ),
             ],
         )
 
@@ -199,15 +200,15 @@ class SQLiteTests(unittest.TestCase):
         self.assertEquals(
             cursor.execute("select * from native_translations").fetchall(),
             [
-                (1, 1, 1, "%03d of %03.3lld"),
+                (1, 1, 1, b"%03d of %03.3lld"),
             ],
         )
 
         self.assertEquals(
             cursor.execute("select * from replaced_params").fetchall(),
             [
-                (1, 1, 1, 0, u"%03d" ),
-                (2, 1, 1, 1, u"%03.3lld"),
+                (1, 1, 1, 0, b"%03d" ),
+                (2, 1, 1, 1, b"%03.3lld"),
             ],
         )
 
@@ -234,7 +235,7 @@ class SQLiteTests(unittest.TestCase):
         db._load_schema = mock.Mock(side_effect = orig_load_schema)
 
         db._schema_file = mock.Mock(
-            return_value = cStringIO.StringIO("""create table test_table (
+            return_value = StringIO("""create table test_table (
                 test_column INTEGER NOT NULL
             );""")
         )
@@ -267,7 +268,7 @@ class SQLiteTests(unittest.TestCase):
         db._load_database = mock.Mock(side_effect = orig_load_database)
 
         db._open_for_reading = mock.Mock(
-            return_value = cStringIO.StringIO("""create table test_table (
+            return_value = StringIO("""create table test_table (
                 test_column INTEGER NOT NULL
             );
 
@@ -353,8 +354,8 @@ class SQLiteTests(unittest.TestCase):
                 from translation_keys"""
             ).fetchall(),
             [
-                (2, u"OtherString"),
-                (1, u"SomeString")
+                (2, b"OtherString"),
+                (1, b"SomeString")
             ],
         )
 
@@ -371,8 +372,8 @@ class SQLiteTests(unittest.TestCase):
                 from translation_keys"""
             ).fetchall(),
             [
-                (2, u"OtherString"),
-                (1, u"SomeString")
+                (2, b"OtherString"),
+                (1, b"SomeString")
             ],
         )
 
@@ -389,8 +390,8 @@ class SQLiteTests(unittest.TestCase):
                 from translation_keys"""
             ).fetchall(),
             [
-                (2, u"OtherString"),
-                (1, u"SomeString")
+                (2, b"OtherString"),
+                (1, b"SomeString")
             ],
         )
 
@@ -407,7 +408,7 @@ class SQLiteTests(unittest.TestCase):
                 from translation_keys"""
             ).fetchall(),
             [
-                (2, u"OtherString")
+                (2, b"OtherString")
             ],
         )
 
@@ -580,7 +581,7 @@ class SQLiteTests(unittest.TestCase):
 
         db.disconnect()
 
-    @mock.patch("__builtin__.open")
+    @mock.patch("builtins.open")
     def test_open_for_reading(self, open_func):
         db = database.SQLite("some_filename")
         db._open_for_reading("filename")

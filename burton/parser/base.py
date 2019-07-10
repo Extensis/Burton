@@ -1,7 +1,7 @@
 import logging
 
 import burton
-from util import filter_string, replace_params
+from .util import filter_string, replace_params
 
 class Base(object):
     def __init__(self):

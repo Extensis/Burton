@@ -2,7 +2,7 @@ import lxml.etree
 import os
 import subprocess
 
-from base import Base
+from .base import Base
 
 import burton
 
@@ -47,7 +47,7 @@ class NIB(Base):
                 for string in strings:
                     string = string.text
                     if string is not None and len(string) > 0:
-                        return_values.add(unicode(string.replace("\n", "\\n")))
+                        return_values.add(string.replace("\n", "\\n"))
 
         return return_values
 

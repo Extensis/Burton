@@ -5,7 +5,7 @@ import re
 import types
 
 import burton
-from base import Base
+from .base import Base
 
 class Properties(Base):
     def __init__(self):
@@ -40,9 +40,6 @@ class Properties(Base):
             key   = None
             value = None
             line  = line.rstrip("\r\n")
-
-            if type(line) != types.UnicodeType:
-                line = unicode(line, "utf-8")
 
             if incomplete_line is not None:
                 if incomplete_line.endswith("\\"):

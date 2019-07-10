@@ -1,11 +1,12 @@
-import cStringIO
 import random
 import unittest
+
+from io import BytesIO
 
 from burton import translation
 
 class XLFTests(unittest.TestCase):
-    test_xlf = """<?xml version='1.0' encoding='UTF-8'?>
+    test_xlf = str.encode("""<?xml version='1.0' encoding='UTF-8'?>
 <xliff version="1.0">
   <file build-num="AG3 doesn't specify" category="" product-name="Test Product" source-language="en" target-language="Italian">
     <header>
@@ -28,9 +29,9 @@ class XLFTests(unittest.TestCase):
     </body>
   </file>
 </xliff>
-"""
+""")
 
-    sorted_test_xlf = """<?xml version='1.0' encoding='UTF-8'?>
+    sorted_test_xlf = str.encode("""<?xml version='1.0' encoding='UTF-8'?>
 <xliff version="1.0">
   <file build-num="AG3 doesn't specify" category="" product-name="Test Product" source-language="en" target-language="Italian">
     <header>
@@ -69,11 +70,11 @@ class XLFTests(unittest.TestCase):
     </body>
   </file>
 </xliff>
-"""
+""")
 
     def test_read(self):
         trans = translation.XLF("Italian", "it-IT", "en", "", "", "")
-        file = cStringIO.StringIO(XLFTests.test_xlf)
+        file = BytesIO(XLFTests.test_xlf)
 
         trans.read(file)
         file.close()
@@ -108,7 +109,7 @@ class XLFTests(unittest.TestCase):
 
         trans.add_translation("Some untranslated string %d", None)
 
-        file = cStringIO.StringIO()
+        file = BytesIO()
         trans.write(file)
 
         self.assertEquals(file.getvalue(), XLFTests.test_xlf)
@@ -135,10 +136,10 @@ class XLFTests(unittest.TestCase):
 
         random.shuffle(mappings)
         for mapping in mappings:
-            for key, value in mapping.iteritems():
+            for key, value in mapping.items():
                 trans.add_translation(key, value)
 
-        file = cStringIO.StringIO()
+        file = BytesIO()
 
         trans.write(file)
 

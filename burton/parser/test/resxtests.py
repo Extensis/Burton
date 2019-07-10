@@ -3,8 +3,10 @@ import os
 import types
 import unittest
 
+from io import BytesIO
+
 from burton import parser
-import teststringio
+from . import teststringio
 
 class RESXTests(unittest.TestCase):
     sample_resx = \
@@ -31,8 +33,7 @@ class RESXTests(unittest.TestCase):
 """
 
     sample_translated_resx = \
-"""<?xml version='1.0' encoding='UTF-8'?>
-<root>
+str.encode("""<root>
     <data name="&gt;&gt;someString.Name" xml:space="preserve">
         <value>SomeString</value>
     </data>
@@ -51,11 +52,10 @@ class RESXTests(unittest.TestCase):
     <data name="ToolTipString.ToolTipText" xml:space="preserve">
         <value>Translated ToolTip String</value>
     </data>
-</root>
-"""
+</root>""")
 
     test_csproj = \
-"""<?xml version="1.0" encoding="utf-8"?>
+str.encode("""<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -109,10 +109,10 @@ class RESXTests(unittest.TestCase):
   <Target Name="AfterBuild">
   </Target>
  </Project>
-"""
+""")
 
     expected_csproj = \
-"""<?xml version='1.0' encoding='ASCII'?>
+str.encode("""<?xml version='1.0' encoding='ASCII'?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0" DefaultTargets="Build">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
   <PropertyGroup>
@@ -169,12 +169,13 @@ class RESXTests(unittest.TestCase):
   <Target Name="AfterBuild">
   </Target>
 </Project>
-"""
+""")
 
     def test_read_file(self):
         extractor = parser.RESX()
         dir = os.path.dirname(__file__)
         file = os.path.join(dir, "test.resx")
+        self.maxDiff = None
 
         self.assertEquals(
             extractor._read_file(file),
@@ -200,7 +201,7 @@ class RESXTests(unittest.TestCase):
         )
 
         for string in extracted_strings:
-            self.assertEquals(type(string), types.UnicodeType)
+            self.assertEquals(type(string), str)
 
     def test_extract_mapping_from_filename(self):
         extractor = parser.RESX()
@@ -220,9 +221,9 @@ class RESXTests(unittest.TestCase):
             }
         )
 
-        for key, value in string_mapping.string_mapping_dict.iteritems():
-            self.assertEquals(type(key), types.UnicodeType)
-            self.assertEquals(type(value), types.UnicodeType)
+        for key, value in string_mapping.string_mapping_dict.items():
+            self.assertEquals(type(key), str)
+            self.assertEquals(type(value), str)
 
     def test_filter_filenames(self):
         extractor = parser.RESX()
@@ -255,7 +256,7 @@ class RESXTests(unittest.TestCase):
         resx_parser = parser.RESX()
         vcs_class = mock.Mock()
         resx_parser._read_file = mock.Mock(return_value = RESXTests.sample_resx)
-        test_file = teststringio.TestStringIO('test.it.resx')
+        test_file = BytesIO()
 
         resx_parser._open_file_for_writing = mock.Mock(return_value = test_file)
 
@@ -323,95 +324,9 @@ class RESXTests(unittest.TestCase):
             os.path.join("Resources", "Sample.it-IT.resx")
         )
 
-    @mock.patch.object(os, "mkdir")
-    def test_translate_write_proj_file(self, mkdir_func):
-        test_file = teststringio.TestStringIO(os.getcwd() + "/Resources/test/Sample.resx")
-        csproj_file = teststringio.TestStringIO(os.getcwd() + "/Resources/test/Proj.csproj", RESXTests.test_csproj)
-        files = {
-            "Resources/test/Sample.it-IT.resx": test_file,
-            "Resources/test/Proj.csproj": csproj_file
-            }
-
-        resx_parser = parser.RESX()
-        vcs_class = mock.Mock()
-        resx_parser._read_file = mock.Mock(return_value = RESXTests.sample_resx)
-
-        resx_parser._open_file_for_writing = mock.Mock()
-        def side_effect(arg):
-            return files[arg]
-        resx_parser._open_file_for_writing.side_effect = side_effect
-
-        resx_parser._open_file_for_appending = mock.Mock(return_value = csproj_file)
-
-        output_filename = resx_parser.translate(
-            "Sample.resx",
-            "Resources/test",
-            {
-                u"Translation for some string" :
-                    u"Traduzione di Bablefish per questa stringa",
-                u"Translation for the other string" :
-                    u"Translation for the other string",
-                u"Will not show up" : u"Will not show up",
-                u"A ToolTip String" : u"Translated ToolTip String",
-            },
-            "Italian",
-            "it-IT",
-            True,
-            vcs_class,
-            "Resources/test/Proj.csproj"
-        )
-        self.assertEquals(
-            csproj_file.getvalue(),
-            RESXTests.expected_csproj
-        )
-
-    @mock.patch.object(os, "mkdir")
-    def test_translate_write_proj_file_notexists(self, mkdir_func):
-        # if a file does not exist in the project it shouldn't be added
-        test_file = teststringio.TestStringIO(os.getcwd() + "/Resources/test/Sample2.resx")
-        csproj_file = teststringio.TestStringIO(os.getcwd() + "/Resources/test/Proj.csproj", RESXTests.test_csproj)
-        files = {
-            "Resources/test/Sample2.it-IT.resx": test_file,
-            "Resources/test/Proj.csproj": csproj_file
-            }
-
-        resx_parser = parser.RESX()
-        vcs_class = mock.Mock()
-        resx_parser._read_file = mock.Mock(return_value = RESXTests.sample_resx)
-
-        resx_parser._open_file_for_writing = mock.Mock()
-        def side_effect(arg):
-            return files[arg]
-        resx_parser._open_file_for_writing.side_effect = side_effect
-
-        resx_parser._open_file_for_appending = mock.Mock(return_value = csproj_file)
-
-        output_filename = resx_parser.translate(
-            "Sample2.resx",
-            "Resources/test",
-            {
-                u"Translation for some string" :
-                    u"Traduzione di Bablefish per questa stringa",
-                u"Translation for the other string" :
-                    u"Translation for the other string",
-                u"Will not show up" : u"Will not show up",
-                u"A ToolTip String" : u"Translated ToolTip String",
-            },
-            "Italian",
-            "it-IT",
-            True,
-            vcs_class,
-            "Resources/test/Proj.csproj"
-        )
-        self.assertEquals(
-            csproj_file.getvalue(),
-            RESXTests.test_csproj
-        )
-
-
-    @mock.patch("__builtin__.open")
+    @mock.patch("builtins.open")
     def test_open_file_for_writing(self, open_func):
         extractor = parser.RESX()
         extractor._open_file_for_writing("filename")
 
-        open_func.assert_called_with("filename", "w")
+        open_func.assert_called_with("filename", "wb")

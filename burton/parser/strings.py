@@ -6,8 +6,8 @@ import types
 import unicodedata
 
 import burton
-from base import Base
-from util import detect_encoding
+from .base import Base
+from .util import detect_encoding
 
 class Strings(Base):
     def __init__(self):
@@ -66,7 +66,7 @@ class Strings(Base):
             value = None
             line  = line.rstrip("\r\n")
 
-            assert type(line) is types.UnicodeType
+            assert type(line) is str
 
             if incomplete_line is not None:
                 if incomplete_line.strip().endswith("\\"):
@@ -140,7 +140,7 @@ class Strings(Base):
         file.close()
 
     def write_mapping(self, file, mapping):
-        sorted_keys = mapping.keys()
+        sorted_keys = list(mapping.keys())
         sorted_keys.sort()
 
         for key in sorted_keys:
@@ -160,7 +160,7 @@ class Strings(Base):
                 file.write(key + ' = "' + value + '";\n')
 
     def _open_file(self, filename):
-        encoding = detect_encoding(open(filename, "r"))
+        encoding = detect_encoding(open(filename, "rb"))
 
         # Strings files should always be unicode of some sort.
         # Sometimes chardet guesses UTF-8 wrong.
@@ -218,7 +218,8 @@ class Strings(Base):
         return output
 
     def _encode(self, str):
-        return str.encode("unicode-escape")\
+        return str.encode('unicode-escape')\
+            .decode('utf8')\
             .replace("\"", "\\\"")\
             .replace("\\x", "\\U00")\
             .replace("\\u", "\\U")\

@@ -3,8 +3,8 @@ import lxml.etree
 import os
 
 import burton
-from base import Base
-from util import filter_string
+from .base import Base
+from .util import filter_string
 
 class RESX(Base):
     data_tag             = "data"
@@ -65,8 +65,8 @@ class RESX(Base):
                 components = node.attrib[RESX.name_attribute].split(".")
                 if len(components) == 1 \
                 or components[-1] in RESX.localizable_suffixes:
-                    key = unicode(".".join(map(filter_component, components)))
-                    value = unicode(node.find(RESX.value_tag).text)
+                    key = ".".join(map(filter_component, components))
+                    value = node.find(RESX.value_tag).text
 
                     if key == "$this":
                         key = dollarsign_this_replacement
@@ -112,7 +112,6 @@ class RESX(Base):
 
             if not os.path.exists(output_filename):
                 created_file = True
-                logger.error("Created new file " + output_filename)
 
 
             tree = lxml.etree.fromstring(self._read_file(input_filename))
@@ -128,17 +127,15 @@ class RESX(Base):
 
             self._parse(tree, input_filename, _rewrite_mapping)
 
+            #Make sure output file exists
             file = self._open_file_for_writing(output_filename)
             lxml.etree.ElementTree(element = tree).write(
-                file,
-                xml_declaration = True,
-                pretty_print = True,
-                encoding = "utf-8"
+                file
             )
+            # Keep open for unit tests
+            file.flush()
 
-            file.close()
-
-            if(proj_file.lower() != "none"):
+            if proj_file is not None and proj_file.lower() != "none":
                 # namespace for xpath queries
                 ns = '{http://schemas.microsoft.com/developer/msbuild/2003}'
 
@@ -193,7 +190,7 @@ class RESX(Base):
                     dep_upon_source = proj_file_tree.findall(xpath)
                     # if we don't match anything something went wrong
                     if (len(dep_upon_source) < 1):
-                        print "Could not find " + input_filename + " in project file. Not adding " + output_filename + " to project"
+                        print("Could not find " + input_filename + " in project file. Not adding " + output_filename + " to project")
                     else:
                         # create our new element
                         resource_elem = lxml.etree.Element('EmbeddedResource', Include=localized_element_path)
@@ -226,7 +223,7 @@ class RESX(Base):
                 if len(components) > 1 and \
                    components[-1] == RESX.name_suffix and \
                    components[-2].endswith("$this"):
-                    return unicode(node.find(RESX.value_tag).text)
+                    return node.find(RESX.value_tag).text
 
     def _read_file(self, filename):
         fp = open(filename, "r")
@@ -235,7 +232,7 @@ class RESX(Base):
         return return_value
 
     def _open_file_for_writing(self, filename):
-        return open(filename, "w")
+        return open(filename, "wb")
 
     def _open_file_for_appending(self, filename):
-        return open(filename, 'ra')
+        return open(filename, 'rab')

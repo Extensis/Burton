@@ -1,6 +1,6 @@
 import codecs
 import collections
-import ConfigParser
+import configparser
 import json
 import logging
 import os
@@ -224,7 +224,7 @@ class Config(object):
             logger.error("usage: python " + script_name + " [path] [arguments]")
             logger.error("This application takes the following arguments")
             logger.error(
-                "\n\t".join(self._command_line_mapping.keys())
+                "\n\t".join(list(self._command_line_mapping.keys()))
             )
             return False
 
@@ -249,7 +249,7 @@ class Config(object):
 
             if os.path.exists(full_path):
                 fp = self._open_for_reading(full_path)
-                parser = ConfigParser.SafeConfigParser(self._config_file_defaults)
+                parser = configparser.ConfigParser(defaults=self._config_file_defaults, allow_no_value=True)
                 parser.readfp(fp)
                 self._platform_queue.extend(parser.sections())
 
@@ -318,7 +318,7 @@ class Config(object):
         """The readfp method reads configuration data from a file or file-like
         object for a specific platform.
         """
-        parser = ConfigParser.SafeConfigParser(self._config_file_defaults)
+        parser = configparser.ConfigParser(defaults=self._config_file_defaults, allow_no_value=True)
         parser.readfp(fp)
 
         if not parser.has_section(platform):
@@ -394,16 +394,13 @@ class Config(object):
         return method(value)
 
     def _add_file_extension_regexes(self, values):
-        return map(
-            lambda(extension): re.compile(".*\." + extension + "$"),
-            values
-        )
+        return [re.compile(".*\." + extension + "$") for extension in values]
 
     def _add_disallowed_path_regexes(self, values):
-        return map(lambda(directory): re.compile(directory), values)
+        return [re.compile(directory) for directory in values]
 
     def _add_mapping_files_regexes(self, values):
-        return map(lambda(file): re.compile(file), values)
+        return [re.compile(file) for file in values]
 
     def _open_for_reading(self, filename):
         return open(filename, "r")

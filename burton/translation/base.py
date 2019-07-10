@@ -57,8 +57,9 @@ class Base(object):
         this object. The return value can be freely modified without affecting
         the contents of this object"""
         copied_dict = self._translation_dict.copy()
+        keys = list(copied_dict.keys())
 
-        for key in copied_dict.keys():
+        for key in keys:
             if not key.endswith(ellipsis) and not key.endswith(three_dots):
                 mac_key = key + ellipsis
                 win_key = key + three_dots

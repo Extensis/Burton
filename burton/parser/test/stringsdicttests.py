@@ -1,14 +1,14 @@
-import cStringIO
 import mock
 import os
 import types
 import unittest
 
+from io import BytesIO, StringIO
+
 from burton import parser
-import teststringio
 
 class StringsDictTests(unittest.TestCase):
-    sample_strings = \
+    sample_strings = str.encode(
 """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -63,9 +63,9 @@ class StringsDictTests(unittest.TestCase):
         </dict>
     </dict>
 </plist>
-"""
+""")
 
-    translated_strings = \
+    translated_strings = str.encode(
 """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -120,7 +120,7 @@ class StringsDictTests(unittest.TestCase):
         </dict>
     </dict>
 </plist>
-"""
+""")
 
     def test_read_file(self):
         extractor = parser.StringsDict()
@@ -168,15 +168,15 @@ class StringsDictTests(unittest.TestCase):
             }
         )
 
-        for key, value in string_mapping.string_mapping_dict.iteritems():
-            self.assertEquals(type(key), types.UnicodeType)
-            self.assertEquals(type(value), types.UnicodeType)
+        for key, value in string_mapping.string_mapping_dict.items():
+            self.assertEquals(type(key), str)
+            self.assertEquals(type(value), str)
 
     @mock.patch.object(os, "mkdir")
     def test_translate(self, mkdir_func):
-        file = cStringIO.StringIO()
+        file = BytesIO()
         translator = parser.StringsDict();
-        test_file = teststringio.TestStringIO()
+        test_file = BytesIO()
         vcs_class = mock.Mock()
 
         translator._open_file_for_writing = mock.Mock(return_value = test_file)
