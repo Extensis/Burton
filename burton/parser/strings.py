@@ -35,11 +35,15 @@ class Strings(Base):
 
         return return_values
 
-    def extract_mapping_from_filename(self, filename, strip_keys = True):
+    def extract_mapping_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         string_mapping = burton.StringMapping(filename = filename)
 
         def _add_mapping(key, value):
-            if strip_keys and key and key[0] == '"':
+            if key and key[0] == '"':
                 key = key[1:-1]
 
             if value and value[0] == '"':

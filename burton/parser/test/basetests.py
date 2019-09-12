@@ -56,7 +56,8 @@ class BaseTests(unittest.TestCase):
         individual_file_mappings = [ mapping1, mapping2 ]
         extractor = burton.parser.Base()
         extractor.extract_mapping_from_filename = mock.Mock(side_effect =
-            lambda filename: individual_file_mappings.pop()
+            lambda filename, additional_function_names:\
+            individual_file_mappings.pop()
         )
 
         final_mapping = extractor.extract_string_mapping_from_files(

@@ -28,13 +28,23 @@ class RESX(Base):
 
         return filtered_files
 
-    def extract_strings_from_filename(self, filename):
+    def extract_strings_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         return set(
-            self.extract_mapping_from_filename(filename).\
-            string_mapping_dict.keys()
+            self.extract_mapping_from_filename(
+                filename,
+                additional_function_names
+            ).string_mapping_dict.keys()
         )
 
-    def extract_mapping_from_filename(self, filename):
+    def extract_mapping_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         string_mapping = burton.StringMapping(filename = filename)
 
         tree = lxml.etree.fromstring(self._read_file(filename))

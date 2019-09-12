@@ -21,7 +21,11 @@ class NIB(Base):
 
         return list(set(filtered_filenames))
 
-    def extract_strings_from_filename(self, filename):
+    def extract_strings_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         return_values = set([])
 
         localizable_key = "com.apple.ibtool.document.localizable-strings"
@@ -51,10 +55,17 @@ class NIB(Base):
 
         return return_values
 
-    def extract_mapping_from_filename(self, filename):
+    def extract_mapping_from_filename(
+		self,
+		filename,
+		additional_function_names = []
+	):
         string_mapping = burton.StringMapping(filename = filename)
 
-        for string in self.extract_strings_from_filename(filename):
+        for string in self.extract_strings_from_filename(
+			filename,
+			additional_function_names
+		):
             string_mapping.add_mapping(string, string)
 
         return string_mapping

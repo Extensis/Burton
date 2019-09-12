@@ -11,7 +11,11 @@ class Properties(Base):
     def __init__(self):
         Base.__init__(self)
 
-    def extract_strings_from_filename(self, filename):
+    def extract_strings_from_filename(
+        self,
+        filename,
+        additional_function_names = [],
+    ):
         return_values = set([])
 
         def _add_key(key, value):
@@ -21,7 +25,11 @@ class Properties(Base):
 
         return return_values
 
-    def extract_mapping_from_filename(self, filename):
+    def extract_mapping_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         string_mapping = burton.StringMapping(filename = filename)
 
         def _add_mapping(key, value):

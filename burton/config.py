@@ -41,34 +41,35 @@ class Config(object):
     """
 
     # Constants for config file variables
-    source_path              = "source_path"
-    company_name             = "company_name"
-    product_name             = "product_name"
-    contact_email            = "contact_email"
-    log_filename             = "log_filename"
-    log_to_file              = "log_to_file"
-    strings_to_ignore_file   = "strings_to_ignore_file"
-    database_adaptor         = "database_adaptor"
-    database_path            = "database_path"
-    logging_level            = "logging_level"
-    vcs_class                = "vcs_class"
-    extensions_to_parse      = "extensions_to_parse"
-    disallowed_paths         = "disallowed_paths"
-    mapping_files            = "mapping_files"
-    parsers_by_extension     = "parsers_by_extension"
-    output_languages         = "output_languages"
-    native_language          = "native_language"
-    translation_files_class  = "translation_files_class"
-    language_codes           = "language_codes"
-    files_by_language        = "files_by_language"
-    paths_to_localize        = "paths_to_localize"
-    recursive_localization   = "recursive_localization"
-    localization_output_dir  = "localization_output_dir"
-    extensions_to_localize   = "extensions_to_localize"
-    abort_if_no_translations = "abort_if_no_translations"
-    xlf_repo_path            = "xlf_repo_path"
-    base_localization_paths  = "base_localization_paths"
-    project_path                = "project_path"
+    source_path               = "source_path"
+    company_name              = "company_name"
+    product_name              = "product_name"
+    contact_email             = "contact_email"
+    log_filename              = "log_filename"
+    log_to_file               = "log_to_file"
+    strings_to_ignore_file    = "strings_to_ignore_file"
+    database_adaptor          = "database_adaptor"
+    database_path             = "database_path"
+    logging_level             = "logging_level"
+    vcs_class                 = "vcs_class"
+    extensions_to_parse       = "extensions_to_parse"
+    disallowed_paths          = "disallowed_paths"
+    mapping_files             = "mapping_files"
+    parsers_by_extension      = "parsers_by_extension"
+    output_languages          = "output_languages"
+    native_language           = "native_language"
+    translation_files_class   = "translation_files_class"
+    language_codes            = "language_codes"
+    files_by_language         = "files_by_language"
+    paths_to_localize         = "paths_to_localize"
+    recursive_localization    = "recursive_localization"
+    localization_output_dir   = "localization_output_dir"
+    extensions_to_localize    = "extensions_to_localize"
+    abort_if_no_translations  = "abort_if_no_translations"
+    xlf_repo_path             = "xlf_repo_path"
+    base_localization_paths   = "base_localization_paths"
+    project_path              = "project_path"
+    additional_function_names = "additional_function_names"
 
     # Constants for command-line options
     root_path          = "root_path"
@@ -79,32 +80,33 @@ class Config(object):
     commit_vcs         = "commit_vcs"
 
     _config_file_defaults = {
-        source_path              : None,
-        company_name             : "",
-        product_name             : "",
-        contact_email            : "",
-        strings_to_ignore_file   : strings_to_ignore_file,
-        database_adaptor         : None,
-        database_path            : None,
-        logging_level            : '"info"',
-        vcs_class                : '"vcs.NoOp"',
-        extensions_to_parse      : None,
-        disallowed_paths         : None,
-        mapping_files            : None,
-        parsers_by_extension     : None,
-        output_languages         : None,
-        native_language          : None,
-        paths_to_localize        : [],
-        recursive_localization   : "false",
-        localization_output_dir  : None,
-        extensions_to_localize   :  [],
-        files_by_language        : {},
-        translation_files_class  : "translation.XLF",
-        abort_if_no_translations : "false",
-        xlf_repo_path            : None,
-        base_localization_paths  : {},
-        project_path                : "",
-        language_codes           : {
+        source_path               : None,
+        company_name              : "",
+        product_name              : "",
+        contact_email             : "",
+        strings_to_ignore_file    : strings_to_ignore_file,
+        database_adaptor          : None,
+        database_path             : None,
+        logging_level             : '"info"',
+        vcs_class                 : '"vcs.NoOp"',
+        extensions_to_parse       : None,
+        disallowed_paths          : None,
+        mapping_files             : None,
+        parsers_by_extension      : None,
+        output_languages          : None,
+        native_language           : None,
+        paths_to_localize         : [],
+        recursive_localization    : "false",
+        localization_output_dir   : None,
+        extensions_to_localize    :  [],
+        files_by_language         : {},
+        translation_files_class   : "translation.XLF",
+        abort_if_no_translations  : "false",
+        xlf_repo_path             : None,
+        base_localization_paths   : {},
+        project_path              : "",
+        additional_function_names : [],
+        language_codes            : {
             "English"    : "en-US",
             "French"     : "fr-FR",
             "German"     : "de-DE",

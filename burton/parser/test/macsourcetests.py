@@ -11,7 +11,8 @@ class NIBTests(unittest.TestCase):
     def test_extract_strings_from_filename(self):
         extractor = parser.MacSource()
         extracted_strings = extractor.extract_strings_from_filename(
-            os.path.join(os.path.dirname(__file__), "test.m")
+            os.path.join(os.path.dirname(__file__), "test.m"),
+			["CustomFunctionLocalizedString", "OtherFunctionLocalizedString"]
         )
 
         self.assertEquals(
@@ -23,6 +24,8 @@ class NIBTests(unittest.TestCase):
                 u"SomeString2",
                 u"SomeOtherString2",
                 u"YetAnotherString2",
+				u"Custom String 1",
+				u"Custom String 2"
             ])
         )
 

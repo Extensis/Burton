@@ -77,7 +77,7 @@ def find_all_files(conf):
     return return_files
 
 def find_files_for_extension(conf, extension):
-    """Finds all files recursively under thae root directory with the specified
+    """Finds all files recursively under the root directory with the specified
     extension"""
 
     return_files = []
@@ -111,16 +111,30 @@ def extract_strings(conf, strings_to_ignore):
             if regex is not None:
                 files.extend(find_files_for_extension(conf, regex))
 
-        strings.update(_extract_strings(parser_name, files, strings_to_ignore))
+        strings.update(_extract_strings(
+            parser_name,
+            files,
+            strings_to_ignore,
+            conf.get(Config.additional_function_names)
+        ))
 
     return strings
 
-def _extract_strings(parser_name, files, strings_to_ignore):
+def _extract_strings(
+    parser_name,
+    files,
+    strings_to_ignore,
+    additional_function_names
+):
     strings = set([])
     if len(files) > 0:
         cls = _class_from_string(parser_name)
         parser = cls()
-        strings = parser.extract_strings_from_files(files, strings_to_ignore)
+        strings = parser.extract_strings_from_files(
+            files,
+            strings_to_ignore,
+            additional_function_names
+        )
 
     return strings
 
@@ -150,19 +164,26 @@ def extract_mapping(conf, strings_to_ignore):
                     files.append(file)
 
         reference_mapping.combine_with(
-            _extract_mapping(parser_name, files, strings_to_ignore)
+            _extract_mapping(
+				parser_name,
+				files,
+				strings_to_ignore,
+				conf.get(Config.additional_function_names)
+			)
         )
 
     return reference_mapping
 
-def _extract_mapping(parser_name, files, strings_to_ignore):
+def _extract_mapping(
+	parser_name, files, strings_to_ignore, additional_function_names):
     reference_mapping = StringMapping()
     if len(files) > 0:
         cls = _class_from_string(parser_name)
         parser = cls()
         reference_mapping = parser.extract_string_mapping_from_files(
             files,
-            strings_to_ignore
+            strings_to_ignore,
+			additional_function_names
         )
 
     return reference_mapping

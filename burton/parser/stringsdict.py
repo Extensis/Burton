@@ -16,13 +16,23 @@ class StringsDict(Base):
     def __init__(self):
         Base.__init__(self)
 
-    def extract_strings_from_filename(self, filename):
+    def extract_strings_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         return set(
-            self.extract_mapping_from_filename(filename).\
-            string_mapping_dict.keys()
+            self.extract_mapping_from_filename(
+                filename,
+                additional_function_names
+            ).string_mapping_dict.keys()
         )
 
-    def extract_mapping_from_filename(self, filename):
+    def extract_mapping_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         string_mapping = burton.StringMapping(filename = filename)
 
         tree = lxml.etree.fromstring(self._read_file(filename))
@@ -74,9 +84,7 @@ class StringsDict(Base):
             os.mkdir(output_directory)
 
         if input_filename.endswith(".stringsdict"):
-            input_keys = self.extract_strings_from_filename(
-                input_filename
-            )
+            input_keys = self.extract_strings_from_filename(input_filename)
 
             output_filename = os.path.join(
                 output_directory,

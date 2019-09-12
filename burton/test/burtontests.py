@@ -18,7 +18,8 @@ class TestParser(object):
     def extract_strings_from_files(
         self,
         filenames,
-        strings_to_ignore = []
+        strings_to_ignore = [],
+        additional_function_names = []
     ):
         return list(self.extract_string_mapping_from_files(
             filenames,
@@ -28,7 +29,8 @@ class TestParser(object):
     def extract_string_mapping_from_files(
         self,
         filenames,
-        strings_to_ignore = []
+        strings_to_ignore = [],
+        additional_function_names = []
     ):
         return_mapping = burton.StringMapping()
 
