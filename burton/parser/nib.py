@@ -2,7 +2,7 @@ import lxml.etree
 import os
 import subprocess
 
-from base import Base
+from .base import Base
 
 import burton
 
@@ -21,7 +21,11 @@ class NIB(Base):
 
         return list(set(filtered_filenames))
 
-    def extract_strings_from_filename(self, filename):
+    def extract_strings_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         return_values = set([])
 
         localizable_key = "com.apple.ibtool.document.localizable-strings"
@@ -47,14 +51,21 @@ class NIB(Base):
                 for string in strings:
                     string = string.text
                     if string is not None and len(string) > 0:
-                        return_values.add(unicode(string.replace("\n", "\\n")))
+                        return_values.add(string.replace("\n", "\\n"))
 
         return return_values
 
-    def extract_mapping_from_filename(self, filename):
+    def extract_mapping_from_filename(
+		self,
+		filename,
+		additional_function_names = []
+	):
         string_mapping = burton.StringMapping(filename = filename)
 
-        for string in self.extract_strings_from_filename(filename):
+        for string in self.extract_strings_from_filename(
+			filename,
+			additional_function_names
+		):
             string_mapping.add_mapping(string, string)
 
         return string_mapping

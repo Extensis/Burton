@@ -4,11 +4,12 @@ def detect_encoding(file):
     """This function attempts to detect the character encoding of a file."""
     encoding = None
 
-    bom = tuple(map(ord, file.read(4)))
+    bom = file.read(4)
 
     encoding = {
-        ( 0x00, 0x00, 0xFE, 0xFF ) : "utf_32", #BE
-        ( 0xFF, 0xFE, 0x00, 0x00 ) : "utf_32", #LE
+        
+        b'\x00\x00\xfe\xff' : "utf_32", #BE
+        b'\xff\xfe\x00\x00' : "utf_32", #LE
     }.get(bom, None)
 
     if encoding is not None:
@@ -17,7 +18,7 @@ def detect_encoding(file):
     bom = bom[:3]
     file.seek(3)
     encoding = {
-        ( 0xEF, 0xBB, 0xBF ) : "utf_8",
+        b'\xef\xbb\xbf' : "utf_8",
     }.get(bom, None)
 
     if encoding is not None:
@@ -26,8 +27,8 @@ def detect_encoding(file):
     bom = bom[:2]
     file.seek(2)
     encoding = {
-        ( 0xFE, 0xFF ) : "utf_16", #BE
-        ( 0xFF, 0xFE ) : "utf_16", #LE
+        b'\xfe\xff' : "utf_16", #BE
+        b'\xff\xfe' : "utf_16", #LE
     }.get(bom, None)
 
     if encoding is not None:
@@ -47,9 +48,8 @@ def detect_encoding(file):
 def filter_string(string):
     string = string.replace("\\r", "\\\\r").replace("\\n", "\\\\n")
     string = string.replace("\r", "\\\\r").replace("\n", "\\\\n")
-    return unicode(
-        string.encode('utf-8').decode("string_escape"), 'utf-8'
-    )
+    string = string.encode('utf-8').decode('unicode-escape')
+    return string
 
 def replace_params(raw_string):
     """This function replaces format placeholders with incrementing numbers
@@ -68,10 +68,10 @@ def replace_params(raw_string):
     printf_specifiers    = "cdieEfgGosuxXpn%@"
     digits               = "1234657890"
 
-    output_string       = unicode("")
+    output_string       = ""
     replaced_strings    = []
     num_replacements    = 0
-    current_token       = unicode("")
+    current_token       = ""
     in_printf           = False
     in_percent_escape   = False
     in_printf_flags     = False
@@ -123,7 +123,7 @@ def replace_params(raw_string):
                     replaced_strings.append(current_token)
                     output_string += "{" + str(num_replacements) + "}"
                     num_replacements += 1
-                    current_token = unicode("")
+                    current_token = ""
                 else:
                     output_string += current_token[:-1]
                     current_token = c
@@ -141,11 +141,11 @@ def replace_params(raw_string):
                 replaced_strings.append(current_token)
                 output_string += "{" + str(num_replacements) + "}"
                 num_replacements += 1
-                current_token = unicode("")
+                current_token = ""
             elif c not in digits:
                 in_num_param = False
                 output_string += current_token
-                current_token = unicode("")
+                current_token = ""
 
         if not in_printf and not in_num_param and not in_percent_escape:
             if c == "%":
@@ -162,7 +162,7 @@ def replace_params(raw_string):
                 in_num_param = True
             else:
                 output_string += current_token
-                current_token = unicode("")
+                current_token = ""
 
         in_percent_escape = False
 
@@ -178,7 +178,7 @@ def restore_platform_specific_params(string, replaced_strings):
     string = string.replace("{", opening_tag)
     string = string.replace("}", closing_tag)
 
-    for index in xrange(0, len(replaced_strings)):
+    for index in range(0, len(replaced_strings)):
         string = string.replace(
             opening_tag + str(index) + closing_tag,
             replaced_strings[index]

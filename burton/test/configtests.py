@@ -1,12 +1,13 @@
 import codecs
 import collections
-import cStringIO
 import logging
 import mock
 import os
 import re
 import testfixtures
 import unittest
+
+from io import StringIO
 
 import burton
 
@@ -17,7 +18,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEquals(c.get("a_param"), 1)
 
     def test_overrides_default_values_with_platform_specific_values(self):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             default_param = 0
             overidden_param = 0
@@ -37,7 +38,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEquals(c.get("overidden_param"), 1)
 
     def test_returns_false_if_missing_required_variable(self):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             overidden_param = 0
 
@@ -57,7 +58,7 @@ class ConfigTests(unittest.TestCase):
         captured_log.uninstall()
 
     def test_returns_false_if_config_file_contains_unknown_variable(self):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             default_param = 0
             overidden_param = 0
@@ -79,7 +80,7 @@ class ConfigTests(unittest.TestCase):
         captured_log.uninstall()
 
     def test_returns_false_if_config_file_does_not_contain_platform(self):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             default_param = 0
             overidden_param = 0
@@ -100,7 +101,7 @@ class ConfigTests(unittest.TestCase):
         captured_log.uninstall()
 
     def test_parses_json_values(self):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             default_param = [ "1", 2, "three" ]
             overidden_param = 0
@@ -119,7 +120,7 @@ class ConfigTests(unittest.TestCase):
             )
 
     def test_calls_custom_methods_for_specified_keys(self):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             default_param = 0
             overidden_param = 0
@@ -145,7 +146,7 @@ class ConfigTests(unittest.TestCase):
         target.custom_function.assert_called_with(0)
 
     def test_creates_regexes_from_file_extensions(self):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             extensions_to_parse = [ ]
 
@@ -157,15 +158,12 @@ class ConfigTests(unittest.TestCase):
 
         self.assertTrue(c.readfp(config_fp, "platform1"))
         self.assertEquals(
-            map(
-                lambda(regex): regex.pattern,
-                c.get(burton.Config.extensions_to_parse)
-            ),
+            [regex.pattern for regex in c.get(burton.Config.extensions_to_parse)],
             [ ".*\.resx$", ".*\.nib$" ]
         )
 
     def test_creates_regexes_from_disallowed_paths(self):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             disallowed_paths = [ ]
 
@@ -177,15 +175,12 @@ class ConfigTests(unittest.TestCase):
 
         self.assertTrue(c.readfp(config_fp, "platform1"))
         self.assertEquals(
-            map(
-                lambda(regex): regex.pattern,
-                c.get(burton.Config.disallowed_paths)
-            ),
+            [regex.pattern for regex in c.get(burton.Config.disallowed_paths)],
             [ "Shared Code/cpp_core/output", "build" ]
         )
 
     def test_creates_regexes_from_mapping_files(self):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             mapping_files = [ ]
 
@@ -197,10 +192,7 @@ class ConfigTests(unittest.TestCase):
 
         self.assertTrue(c.readfp(config_fp, "platform1"))
         self.assertEquals(
-            map(
-                lambda(regex): regex.pattern,
-                c.get(burton.Config.mapping_files)
-            ),
+            [regex.pattern for regex in c.get(burton.Config.mapping_files)],
             [ "\\.strings$", "\\.rc$", "\\.resx$" ]
         )
 
@@ -278,7 +270,7 @@ class ConfigTests(unittest.TestCase):
             (
                 burton.logger_name,
                 "ERROR",
-                "\n\t".join(c._command_line_mapping.keys())
+                "\n\t".join(list(c._command_line_mapping.keys()))
             )
         )
         
@@ -351,7 +343,7 @@ class ConfigTests(unittest.TestCase):
         captured_log.uninstall()
 
     def test_uses_defaults(self):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             [platform1]
         """.replace("    ", ""))
@@ -374,7 +366,7 @@ class ConfigTests(unittest.TestCase):
 
     @mock.patch.object(os.path, "exists")
     def test_parse_config_file(self, mock_path_exists_func):
-        config_fp = cStringIO.StringIO("""
+        config_fp = StringIO("""
             [DEFAULT]
             [platform1]
         """.replace("    ", ""))
@@ -415,7 +407,7 @@ class ConfigTests(unittest.TestCase):
     def test_create_new_config_file(self):
         lines = []
         def _write(line):
-            lines.append(line)
+            lines.append(line.decode())
 
         write_fp            = mock.Mock()
         write_fp.write      = mock.Mock(side_effect = _write)
@@ -441,7 +433,7 @@ class ConfigTests(unittest.TestCase):
         captured_log.uninstall()
 
         self.assertEquals(
-            "".join(lines),
+            str.encode("".join(lines)),
             c._get_default_config_file().read()
         )
 
@@ -460,7 +452,7 @@ class ConfigTests(unittest.TestCase):
         conf.get = mock.Mock(side_effect = _config_get)
 
         mock_path_exists_func.return_value = True
-        open_func.return_value = cStringIO.StringIO("""ignore1
+        open_func.return_value = StringIO("""ignore1
 ignore2
 ignore3""")
 
@@ -492,14 +484,14 @@ ignore3""")
         finally:
             self.assertTrue(test_passed)
 
-    @mock.patch("__builtin__.open")
+    @mock.patch("builtins.open")
     def test_open_for_reading(self, open_func):
         c = burton.Config()
         c._open_for_reading("filename")
 
         open_func.assert_called_with("filename", "r")
 
-    @mock.patch("__builtin__.open")
+    @mock.patch("builtins.open")
     def test_open_for_writing(self, open_func):
         c = burton.Config()
         c._open_for_writing("filename")
@@ -514,7 +506,7 @@ ignore3""")
     @mock.patch.object(os.path, "exists")
     def test_parse_config_file_for_next_platform(self, mock_path_exists_func):
         def _open_file(filename):
-            config_fp = cStringIO.StringIO("""
+            config_fp = StringIO("""
                 [DEFAULT]
                 default_param = 0
                 overidden_param = 0

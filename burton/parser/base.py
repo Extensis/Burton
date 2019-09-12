@@ -1,13 +1,18 @@
 import logging
 
 import burton
-from util import filter_string, replace_params
+from .util import filter_string, replace_params
 
 class Base(object):
     def __init__(self):
         object.__init__(self)
 
-    def extract_strings_from_files(self, filenames, strings_to_ignore = []):
+    def extract_strings_from_files(
+        self,
+        filenames,
+        strings_to_ignore = [],
+        additional_function_names = []
+    ):
         logger           = logging.getLogger(burton.logger_name)
         raw_strings      = set([])
         filtered_strings = set([])
@@ -27,7 +32,8 @@ class Base(object):
     def extract_string_mapping_from_files(
         self,
         filenames,
-        strings_to_ignore = []
+        strings_to_ignore = [],
+        additional_function_names = []
     ):
         logger            = logging.getLogger(burton.logger_name)
         reference_mapping = burton.StringMapping()
@@ -35,7 +41,10 @@ class Base(object):
         for filename in set(self._filter_filenames(filenames)):
             logger.debug("Extracting string mapping from " + filename)
             reference_mapping.combine_with(
-                self.extract_mapping_from_filename(filename)
+                self.extract_mapping_from_filename(
+                    filename,
+                    additional_function_names
+                )
             )
 
         strings_to_remove = []

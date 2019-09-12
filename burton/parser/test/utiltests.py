@@ -1,9 +1,10 @@
 import chardet
-import cStringIO
 import mock
 import struct
 import types
 import unittest
+
+from io import BytesIO
 
 import burton.parser
 
@@ -14,13 +15,13 @@ class UtilTests(unittest.TestCase):
         newline_string2   = burton.parser.filter_string("New\\r\\nline")
 
         self.assertEquals(apostrophe_string, u"There's no escape!")
-        self.assertEquals(type(apostrophe_string), types.UnicodeType)
+        self.assertEquals(type(apostrophe_string), str)
 
         self.assertEquals(newline_string, u"New\\r\\nline")
-        self.assertEquals(type(newline_string), types.UnicodeType)
+        self.assertEquals(type(newline_string), str)
 
         self.assertEquals(newline_string2, u"New\\r\\nline")
-        self.assertEquals(type(newline_string2), types.UnicodeType)
+        self.assertEquals(type(newline_string2), str)
 
     def test_replace_params(self):
         self.assertEquals(
@@ -51,20 +52,20 @@ class UtilTests(unittest.TestCase):
     def test_detect_encoding(self, mock_func):
         mock_func.return_value = { "encoding" : "ascii" }
 
-        test_file = cStringIO.StringIO("this is an ascii string")
+        test_file = BytesIO(b"this is an ascii string")
         self.assertEquals(burton.parser.detect_encoding(test_file), "ascii")
         test_file.close()
 
         bom = struct.pack("BBB", 0xEF, 0xBB, 0xBF)
-        test_file = cStringIO.StringIO(bom + "UTF-8 String")
+        test_file = BytesIO(bom + b"UTF-8 String")
         self.assertEquals(burton.parser.detect_encoding(test_file), "utf_8")
 
         bom = struct.pack("BB", 0xFE, 0xFF)
-        test_file = cStringIO.StringIO(bom + "UTF-16 BE String")
+        test_file = BytesIO(bom + b"UTF-16 BE String")
         self.assertEquals(burton.parser.detect_encoding(test_file), "utf_16")
 
         bom = struct.pack("BBBB", 0x00, 0x00, 0xFE, 0xFF)
-        test_file = cStringIO.StringIO(bom + "UTF-16 32 String")
+        test_file = BytesIO(bom + b"UTF-16 32 String")
         self.assertEquals(burton.parser.detect_encoding(test_file), "utf_32")
 
         def _throw_exception(file):
@@ -72,5 +73,5 @@ class UtilTests(unittest.TestCase):
 
         mock_func.side_effect = _throw_exception
 
-        test_file = cStringIO.StringIO("this is a strange string")
+        test_file = BytesIO(b"this is a strange string")
         self.assertEquals(burton.parser.detect_encoding(test_file), "iso-8859-1")

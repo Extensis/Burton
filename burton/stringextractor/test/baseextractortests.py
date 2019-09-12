@@ -12,7 +12,7 @@ class BaseExtractorTests(unittest.TestCase):
 
         extractor = stringextractor.Base()
         extractor.extract_strings_from_filename = mock.Mock(side_effect =
-            lambda(x): individual_file_strings.pop()
+            lambda x: individual_file_strings.pop()
         )
 
         self.assertEquals(

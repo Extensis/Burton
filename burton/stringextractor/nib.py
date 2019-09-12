@@ -21,7 +21,11 @@ class NIB(stringextractor.Base):
             filtered_filenames
         )
 
-    def extract_strings_from_filename(self, filename):
+    def extract_strings_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         return_values = set([])
 
         localizable_key = "com.apple.ibtool.document.localizable-strings"

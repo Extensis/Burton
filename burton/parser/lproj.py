@@ -1,13 +1,14 @@
-import cStringIO
 import codecs
 import logging
 import os
 
+from io import StringIO
+
 import burton
-from base import Base
-from strings import Strings
-from stringsdict import StringsDict
-from util import replace_params, restore_platform_specific_params
+from .base import Base
+from .strings import Strings
+from .stringsdict import StringsDict
+from .util import replace_params, restore_platform_specific_params
 
 class LPROJ(Base):
     def translate(

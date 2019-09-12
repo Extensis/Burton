@@ -6,14 +6,14 @@ import re
 import subprocess
 import sys
 
-import database
-import parser
-import translation
-import vcs
+from . import database
+from . import parser
+from . import translation
+from . import vcs
 
-from config import Config
-from logginghandler import BurtonLoggingHandler
-from stringmapping import StringMapping
+from .config import Config
+from .logginghandler import BurtonLoggingHandler
+from .stringmapping import StringMapping
 
 logger_name = "extensis.burton"
 logging_handler = BurtonLoggingHandler()
@@ -77,7 +77,7 @@ def find_all_files(conf):
     return return_files
 
 def find_files_for_extension(conf, extension):
-    """Finds all files recursively under thae root directory with the specified
+    """Finds all files recursively under the root directory with the specified
     extension"""
 
     return_files = []
@@ -111,22 +111,36 @@ def extract_strings(conf, strings_to_ignore):
             if regex is not None:
                 files.extend(find_files_for_extension(conf, regex))
 
-        strings.update(_extract_strings(parser_name, files, strings_to_ignore))
+        strings.update(_extract_strings(
+            parser_name,
+            files,
+            strings_to_ignore,
+            conf.get(Config.additional_function_names)
+        ))
 
     return strings
 
-def _extract_strings(parser_name, files, strings_to_ignore):
+def _extract_strings(
+    parser_name,
+    files,
+    strings_to_ignore,
+    additional_function_names
+):
     strings = set([])
     if len(files) > 0:
         cls = _class_from_string(parser_name)
         parser = cls()
-        strings = parser.extract_strings_from_files(files, strings_to_ignore)
+        strings = parser.extract_strings_from_files(
+            files,
+            strings_to_ignore,
+            additional_function_names
+        )
 
     return strings
 
 def _get_extensions_by_parser(conf):
     extensions_by_parser = { }
-    for key, value in conf.get(Config.parsers_by_extension).iteritems():
+    for key, value in conf.get(Config.parsers_by_extension).items():
         extensions_by_parser[value] = extensions_by_parser.get(value, [])
         extensions_by_parser[value].append(key)
 
@@ -150,19 +164,26 @@ def extract_mapping(conf, strings_to_ignore):
                     files.append(file)
 
         reference_mapping.combine_with(
-            _extract_mapping(parser_name, files, strings_to_ignore)
+            _extract_mapping(
+				parser_name,
+				files,
+				strings_to_ignore,
+				conf.get(Config.additional_function_names)
+			)
         )
 
     return reference_mapping
 
-def _extract_mapping(parser_name, files, strings_to_ignore):
+def _extract_mapping(
+	parser_name, files, strings_to_ignore, additional_function_names):
     reference_mapping = StringMapping()
     if len(files) > 0:
         cls = _class_from_string(parser_name)
         parser = cls()
         reference_mapping = parser.extract_string_mapping_from_files(
             files,
-            strings_to_ignore
+            strings_to_ignore,
+			additional_function_names
         )
 
     return reference_mapping

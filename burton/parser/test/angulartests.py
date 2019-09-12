@@ -1,11 +1,12 @@
-import cStringIO
 import mock
 import os
 import types
 import unittest
 
+from io import StringIO
+
 from burton import parser
-import teststringio
+from . import teststringio
 
 class AngularTests(unittest.TestCase):
     sample_strings = \
@@ -62,7 +63,7 @@ module Extensis.Suitcase.i18n {
     def test_extract_strings_from_filename(self):
         extractor = parser.Angular()
         extractor._open_file_for_reading = mock.Mock(return_value = (
-            cStringIO.StringIO(AngularTests.sample_strings),
+            StringIO(AngularTests.sample_strings),
             "utf_8"
         ))
 
@@ -80,7 +81,7 @@ module Extensis.Suitcase.i18n {
     def test_extract_mapping_from_filename(self):
         extractor = parser.Angular()
         extractor._open_file_for_reading = mock.Mock(return_value = (
-            cStringIO.StringIO(AngularTests.sample_strings),
+            StringIO(AngularTests.sample_strings),
             "utf_8"
         ))
 
@@ -96,9 +97,9 @@ module Extensis.Suitcase.i18n {
             }
         )
 
-        for key, value in string_mapping.string_mapping_dict.iteritems():
-            self.assertEquals(type(key), types.UnicodeType)
-            self.assertEquals(type(value), types.UnicodeType)
+        for key, value in string_mapping.string_mapping_dict.items():
+            self.assertEquals(type(key), str)
+            self.assertEquals(type(value), str)
 
     def test_translate(self):
         vcs_class = mock.Mock()

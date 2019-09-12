@@ -4,7 +4,7 @@ import os
 from pkg_resources import resource_stream
 
 from burton import parser
-from base import Base
+from .base import Base
 
 class XLF(Base):
     encoding               = "UTF-8"

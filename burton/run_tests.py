@@ -7,14 +7,15 @@ sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
 logger.addHandler(sh)
 
-if sys.hexversion < 0x02070000:
-    logger.error("Python 2.7 or grater is required to run burton.")
+if sys.hexversion < 0x03070000:
+    logger.error("Python 3.7 or grater is required to run burton.")
     exit(1)
 
-requirements = ["coverage", "mock", "nose", "testfixtures"]
+requirements = ["chardet", "lxml", "coverage", "mock", "nose", "testfixtures"]
 
 try:
     for requirement in requirements:
+        print("Importing " + requirement)
         __import__(requirement)
 
 except ImportError:
@@ -23,7 +24,7 @@ except ImportError:
 
     logger.error("Installing missing dependencies")
 
-    args = ["/usr/bin/easy_install"]
+    args = ["pip", "install"]
     args.extend(requirements)
 
     return_code = subprocess.call(args)

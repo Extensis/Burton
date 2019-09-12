@@ -6,7 +6,11 @@ class RESX(stringextractor.Base):
     def __init__(self):
         stringextractor.Base.__init__(self)
 
-    def extract_strings_from_filename(self, filename):
+    def extract_strings_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         return_values = set([])
 
         data_tag        = "data"

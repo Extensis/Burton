@@ -1,7 +1,8 @@
-import cStringIO
 import mock
 import os
 import unittest
+
+from io import StringIO
 
 import stringextractor
 
@@ -43,7 +44,7 @@ END
     def test_extract_strings_from_filename(self):
         extractor = stringextractor.RC()
         extractor._open_file = mock.Mock(
-            return_value = cStringIO.StringIO(RCExtractorTests.sample_resx)
+            return_value = StringIO(RCExtractorTests.sample_resx)
         )
 
         self.assertEquals(

@@ -6,7 +6,7 @@ import types
 import unittest
 
 from burton import parser
-import teststringio
+from . import teststringio
 
 class PropertiesTests(unittest.TestCase):
     sample_file = \
@@ -68,9 +68,9 @@ CouldNotOpenFont Could not open font "{0}".
             }
         )
 
-        for key, value in string_mapping.string_mapping_dict.iteritems():
-            self.assertEquals(type(key), types.UnicodeType)
-            self.assertEquals(type(value), types.UnicodeType)
+        for key, value in string_mapping.string_mapping_dict.items():
+            self.assertEquals(type(key), str)
+            self.assertEquals(type(value), str)
 
     def test_write_mapping(self):
         file = teststringio.TestStringIO()

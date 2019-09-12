@@ -3,8 +3,8 @@ import lxml.etree
 import os
 
 import burton
-from base import Base
-from util import filter_string
+from .base import Base
+from .util import filter_string
 
 class StringsDict(Base):
     plist_tag  = 'plist'
@@ -16,13 +16,23 @@ class StringsDict(Base):
     def __init__(self):
         Base.__init__(self)
 
-    def extract_strings_from_filename(self, filename):
+    def extract_strings_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         return set(
-            self.extract_mapping_from_filename(filename).\
-            string_mapping_dict.keys()
+            self.extract_mapping_from_filename(
+                filename,
+                additional_function_names
+            ).string_mapping_dict.keys()
         )
 
-    def extract_mapping_from_filename(self, filename):
+    def extract_mapping_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         string_mapping = burton.StringMapping(filename = filename)
 
         tree = lxml.etree.fromstring(self._read_file(filename))
@@ -48,7 +58,7 @@ class StringsDict(Base):
                                 valid_key = category in StringsDict.valid_keys
                             elif entry.tag == StringsDict.string_tag:
                                 if valid_key:
-                                    func(unicode(entry.text), category, entry)
+                                    func(entry.text, category, entry)
                                 valid_key = False
 
     def translate(
@@ -74,9 +84,7 @@ class StringsDict(Base):
             os.mkdir(output_directory)
 
         if input_filename.endswith(".stringsdict"):
-            input_keys = self.extract_strings_from_filename(
-                input_filename
-            )
+            input_keys = self.extract_strings_from_filename(input_filename)
 
             output_filename = os.path.join(
                 output_directory,
@@ -87,7 +95,6 @@ class StringsDict(Base):
 
             if not os.path.exists(output_filename):
                 created_file = True
-                logger.error("Created new file " + output_filename)
 
             tree = lxml.etree.fromstring(self._read_file(input_filename))
 
@@ -98,7 +105,7 @@ class StringsDict(Base):
             self._parse(tree, _rewrite_mapping)
 
             file = self._open_file_for_writing(output_filename)
-            file.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+            file.write(b"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
             lxml.etree.ElementTree(element = tree).write(
                 file,
                 xml_declaration = False,
@@ -106,18 +113,16 @@ class StringsDict(Base):
                 encoding = "utf-8"
             )
 
-            file.close()
-
             if should_use_vcs:
                 vcs_class.add_file(output_filename)
 
         return output_filename
 
     def _read_file(self, filename):
-        fp = open(filename, "r")
+        fp = open(filename, "rb")
         return_value = fp.read()
         fp.close()
         return return_value
 
     def _open_file_for_writing(self, filename):
-        return open(filename, "w")
+        return open(filename, "wb")

@@ -5,13 +5,17 @@ import re
 import types
 
 import burton
-from base import Base
+from .base import Base
 
 class Properties(Base):
     def __init__(self):
         Base.__init__(self)
 
-    def extract_strings_from_filename(self, filename):
+    def extract_strings_from_filename(
+        self,
+        filename,
+        additional_function_names = [],
+    ):
         return_values = set([])
 
         def _add_key(key, value):
@@ -21,7 +25,11 @@ class Properties(Base):
 
         return return_values
 
-    def extract_mapping_from_filename(self, filename):
+    def extract_mapping_from_filename(
+        self,
+        filename,
+        additional_function_names = []
+    ):
         string_mapping = burton.StringMapping(filename = filename)
 
         def _add_mapping(key, value):
@@ -40,9 +48,6 @@ class Properties(Base):
             key   = None
             value = None
             line  = line.rstrip("\r\n")
-
-            if type(line) != types.UnicodeType:
-                line = unicode(line, "utf-8")
 
             if incomplete_line is not None:
                 if incomplete_line.endswith("\\"):

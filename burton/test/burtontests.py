@@ -18,17 +18,19 @@ class TestParser(object):
     def extract_strings_from_files(
         self,
         filenames,
-        strings_to_ignore = []
+        strings_to_ignore = [],
+        additional_function_names = []
     ):
-        return self.extract_string_mapping_from_files(
+        return list(self.extract_string_mapping_from_files(
             filenames,
             strings_to_ignore
-        ).get_string_mapping_dict().keys()
+        ).get_string_mapping_dict().keys())
 
     def extract_string_mapping_from_files(
         self,
         filenames,
-        strings_to_ignore = []
+        strings_to_ignore = [],
+        additional_function_names = []
     ):
         return_mapping = burton.StringMapping()
 
@@ -58,69 +60,6 @@ class TestSourceParser(TestParser):
 
 
 class BurtonTests(unittest.TestCase):
-    @mock.patch.object(logging, "getLogger")
-    def test_setup_default_logger(self, log_func):
-        handlers = []
-        def _add_handler(handler):
-            handlers.append(handler)
-
-        logger = mock.Mock()
-        logger.addHandler.side_effect = _add_handler
-        log_func.return_value = logger
-
-        burton.setup_default_logger()
-
-        self.assertEquals(len(handlers), 2)
-        self.assertEquals(
-            type(handlers[0]),
-            type(logging.StreamHandler(sys.stdout))
-        )
-        self.assertEquals(
-            type(handlers[1]),
-            type(burton.BurtonLoggingHandler())
-        )
-
-    @mock.patch.object(logging, "getLogger")
-    def test_config_logger(self, log_func):
-        handlers = []
-        def _add_handler(handler):
-            handlers.append(handler)
-
-        logger = mock.Mock()
-        logger.addHandler.side_effect = _add_handler
-        log_func.return_value = logger
-
-        sample_filename = "burton_test_file"
-        config_dict = {
-            burton.Config.logging_level : "info",
-            burton.Config.log_filename  : "None",
-        }
-
-        def _config_get(key):
-            return config_dict[key]
-
-        conf = mock.Mock()
-        conf.get.side_effect = _config_get
-
-        logging_levels = {
-            "debug"    : logging.DEBUG,
-            "info"     : logging.INFO,
-            "warning"  : logging.WARNING,
-            "error"    : logging.ERROR,
-            "critical" : logging.CRITICAL
-        }
-
-        num_times_called = 0
-        for logging_level in logging_levels:
-            config_dict[burton.Config.logging_level] = logging_level
-
-            burton.config_logger(conf)
-            logger.setLevel.assert_called_with(logging_levels[logging_level])
-            num_times_called += 1
-
-        self.assertEquals(num_times_called, 5)
-        self.assertEquals(len(handlers), 0)
-
     def test_class_from_string(self):
         self.assertEquals(burton._class_from_string(None), None)
         self.assertEquals(burton._class_from_string("burton.FakeClass"), None)
@@ -349,7 +288,7 @@ class BurtonTests(unittest.TestCase):
 
         captured_log.uninstall()
 
-    @mock.patch("__builtin__.open")
+    @mock.patch("builtins.open")
     @mock.patch.object(burton, "_open_translation_file_for_language")
     def test_update_translation_file(
         self,
@@ -406,7 +345,7 @@ class BurtonTests(unittest.TestCase):
 
         captured_log.uninstall()
 
-    @mock.patch("__builtin__.open")
+    @mock.patch("builtins.open")
     @mock.patch.object(burton, "_open_translation_file_for_language")
     def test_update_translation_file_ignores_whitespace_entries(
         self,
@@ -539,7 +478,7 @@ class BurtonTests(unittest.TestCase):
             type(TestRCParser())
         )
 
-    @mock.patch("__builtin__.open")
+    @mock.patch("builtins.open")
     @mock.patch.object(os.path, "exists")
     def test_open_translation_file_for_language(self, exists_func, open_func):
         exists_func.return_value = False
@@ -625,7 +564,7 @@ class BurtonTests(unittest.TestCase):
             os.path.abspath(xlf_repo_path)
         )
 
-    @mock.patch("__builtin__.exit")
+    @mock.patch("builtins.exit")
     @mock.patch.object(os, "chdir")
     @mock.patch.object(os.path, "isdir")
     @mock.patch.object(burton, "_create_config_instance")
@@ -825,7 +764,7 @@ class BurtonTests(unittest.TestCase):
             ran_all_tests = True
 
         except Exception as e:
-            print e
+            print(e)
             self.assertFalse(True)
         finally:
             if os.path.exists(test_db_name):
@@ -833,7 +772,7 @@ class BurtonTests(unittest.TestCase):
 
             self.assertTrue(ran_all_tests)
 
-    @mock.patch("__builtin__.exit")
+    @mock.patch("builtins.exit")
     @mock.patch.object(burton, "_create_config_instance")
     def test_run_fails_if_there_are_no_platforms_in_config_file(
         self,
@@ -860,24 +799,7 @@ class BurtonTests(unittest.TestCase):
 
         exit_func.assert_called_with(1)
 
-    @mock.patch.object(logging, "FileHandler")
-    def test_log_filename(self, logging_constructor):
-        config_dict = {
-            burton.Config.logging_level : "info",
-            burton.Config.log_filename  : "some_filename.log"
-        }
-
-        def _config_get(key):
-            return config_dict[key]
-
-        conf = mock.Mock()
-        conf.get.side_effect = _config_get
-
-        burton.config_logger(conf)
-
-        logging_constructor.assert_called_with("some_filename.log")
-
-    @mock.patch("__builtin__.exit")
+    @mock.patch("builtins.exit")
     @mock.patch.object(burton, "_create_config_instance")
     def test_exits_if_command_line_arguments_cannot_be_parsed(
         self,
@@ -904,7 +826,7 @@ class BurtonTests(unittest.TestCase):
 
         exit_func.assert_called_with(1)
 
-    @mock.patch("__builtin__.exit")
+    @mock.patch("builtins.exit")
     @mock.patch.object(burton, "_create_config_instance")
     def test_exits_if_cannot_read_platforms_from_config(
         self,
